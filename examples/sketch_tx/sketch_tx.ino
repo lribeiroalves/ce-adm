@@ -13,7 +13,7 @@ DHT dht(DHTPIN, DHTTYPE);
 ESP32Time rtc;
 const int MPU=0x68;
 short GyX,GyY,GyZ;
-byte protocol[11];
+byte protocol[12];
 bool LED;
 
 void setup() {
@@ -70,16 +70,16 @@ void loop() {
     delay(100);
   }
 
-  protocol[8] = iteracao[0] / 128;
-  protocol[9] = iteracao[1] / 128;
-  protocol[10] = iteracao[2] / 128;
+  protocol[9] = iteracao[0] / 128;
+  protocol[10] = iteracao[1] / 128;
+  protocol[11] = iteracao[2] / 128;
 
   //UMIDADE
   int8_t h = dht.readHumidity();
   protocol[6] = h;
   if (isnan(h))
   {
-    protocol[6] = 0;
+    protocol[7] = 254;
   }
   
   float t = dht.readTemperature();
@@ -87,23 +87,25 @@ void loop() {
   protocol[7] = tFormat;
   if (isnan(t))
   {
-    protocol[7] = 255;
+    protocol[8] = 254;
   }
   
   //RTC
-  protocol[0] = rtc.getDay();
-	protocol[1] = rtc.getMonth();
-	protocol[2] = rtc.getYear() - 2000;
-	protocol[3] = rtc.getHour(true);
-  protocol[4] = rtc.getMinute();
-	protocol[5] = rtc.getSecond();
+  protocol[1] = rtc.getDay();
+	protocol[2] = rtc.getMonth();
+	protocol[3] = rtc.getYear() - 2000;
+	protocol[4] = rtc.getHour(true);
+  protocol[5] = rtc.getMinute();
+	protocol[6] = rtc.getSecond();
+
+  protocol[0] = ","; //enviando a vírgula dentro do pacote
 
   //ESCRITA
-  Serial2.write(",");
-  Serial2.write(protocol, 11);
+  //Serial2.write(",");
+  Serial2.write(protocol, 12);
   Serial.print(",");
-  Serial.write(protocol, 11);
-  Serial.println();
+  //Serial.write(protocol, 12);
+  //Serial.println();
   
   /*  PARA VISUALIZAÇÃO DOS ARQUIVOS NO PROMPT
   for(__int8_t i = 0; i < 11; i++)
