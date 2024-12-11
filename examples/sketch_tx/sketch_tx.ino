@@ -6,7 +6,7 @@
 //DEFINIÇÕES
 #define DHTPIN 27     
 #define DHTTYPE DHT11  
-//#define BUILT_LED 2
+#define BUILT_LED 2
 
 //DECLARAÇÕES
 DHT dht(DHTPIN, DHTTYPE);
@@ -14,7 +14,7 @@ ESP32Time rtc;
 const int MPU=0x68;
 short GyX,GyY,GyZ;
 byte protocol[11];
-//bool LED;
+bool LED;
 
 void setup() {
   Serial.begin(9600);
@@ -23,7 +23,7 @@ void setup() {
   //DHT pins config
   pinMode(26, OUTPUT);
   pinMode(12, OUTPUT);
-  //pinMode(BUILT_LED,OUTPUT);
+  pinMode(BUILT_LED,OUTPUT);
   digitalWrite(26, HIGH);
   digitalWrite(12, LOW);
 
@@ -113,8 +113,8 @@ void loop() {
   }
   Serial.println();
   */
-  //LED = !LED;
-  //digitalWrite(BUILT_LED,LED);
+  LED = !LED;
+  digitalWrite(BUILT_LED,LED);
 
   delay(100);
 }
