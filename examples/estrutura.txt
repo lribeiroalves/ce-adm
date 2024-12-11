@@ -1,0 +1,3 @@
+-> sketch_tx
+	-> programa para teste de transmissão dos pacotes a partir da via.
+	-> Seção de Teste: Plat de BEL para torre do EPB.
