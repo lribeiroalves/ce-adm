@@ -2,21 +2,25 @@
  https://www.electronicwings.com/
   SD Card Interface code for ESP32
   SPI Pins of ESP32 SD card as follows:
-  CS    = 5;
-  MOSI  = 23;
-  MISO  = 19;
-  SCK   = 18; 
+  CS    = 5 / 15;
+  MOSI  = 23 / 13;
+  MISO  = 19 / 12;
+  SCK   = 18 / 14; 
 */
 
 #include <SPI.h>
 #include <SD.h>
 
 File myFile;
-const int CS = 5;
+int cs = 2;
+int sck = 4;
+int mosi = 16;
+int miso = 17;
 
 void WriteFile(const char * path, const char * data) {
   // Abrir arquivo (apenas um de cada vez)
-  myFile = SD.open(path, FILE_APPEND);
+  // myFile = SD.open(path, FILE_APPEND);
+  myFile = SD.open(path, FILE_WRITE);
 
   if (myFile) {
     Serial.printf("Escrevendo no arquivo %s\n", path);
@@ -56,15 +60,16 @@ void setup() {
   while (!Serial) {;}
   
   Serial.println("Inicializando SD Card");
-  if (!SD.begin(CS)) {
+  SPI.begin(sck, miso, mosi, cs);
+  if (!SD.begin(cs)) {
     Serial.println("Falha na Inicialização");
     return;
   }
   Serial.println("Inicialização concluída.");
 
-  WriteFile("/test.txt", "Novo");
-  WriteFile("/test.txt", "Teste");
-  WriteFile("/test.txt", "SD Card");
+  // WriteFile("/test.txt", "Novo");
+  // WriteFile("/test.txt", "Teste");
+  WriteFile("/test.txt", "SD Card - Testes");
   ReadFile("/test.txt");
 }
 
