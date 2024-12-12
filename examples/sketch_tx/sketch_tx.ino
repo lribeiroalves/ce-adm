@@ -2,6 +2,8 @@
 #include "DHT.h"
 #include <ESP32Time.h>
 #include <Wire.h>
+#include <SPI.h>
+#include <SD.h>
 
 //DEFINIÇÕES
 #define DHTPIN 27     
@@ -15,10 +17,31 @@ const int MPU=0x68;
 short GyX,GyY,GyZ;
 byte protocol[12];
 bool LED;
+File myFile;
+const int cs = 5;
+
+void WriteData(const char * path, const char * data) {
+  myFile = SD.open(path, FILE_APPEND);
+
+  if (myFile) {
+    // escrever msg no SD
+  }
+  else {
+    Serial.println("Não foi possível abrir o arquivo");
+  }
+}
 
 void setup() {
   Serial.begin(9600);
   Serial2.begin(1200, SERIAL_8N1, 32, 33); 
+
+  // Inicialização do Cartão SD
+  Serial.println("Inicializando SD Card");
+  if (!SD.begin(cs)) {
+    Serial.println("Falha na Inicialização do cartão SD");
+    return;
+  }
+  Serial.println("Inicialização do cartão SD concluída.");
 
   //DHT pins config
   pinMode(26, OUTPUT);
@@ -101,20 +124,20 @@ void loop() {
   protocol[0] = ","; //enviando a vírgula dentro do pacote
 
   //ESCRITA
-  //Serial2.write(",");
+  // Serial2.write(",");
   Serial2.write(protocol, 12);
-  Serial.print(",");
-  //Serial.write(protocol, 12);
-  //Serial.println();
+  // Serial.print(",");
+  Serial.write(protocol, 12);
+  Serial.println();
   
-  /*  PARA VISUALIZAÇÃO DOS ARQUIVOS NO PROMPT
-  for(__int8_t i = 0; i < 11; i++)
+  //  PARA VISUALIZAÇÃO DOS ARQUIVOS NO PROMPT
+  for(__int8_t i = 0; i < 12; i++)
   {
     Serial.print(protocol[i], HEX);
     Serial.print("  ");
   }
   Serial.println();
-  */
+  
   LED = !LED;
   digitalWrite(BUILT_LED,LED);
 
