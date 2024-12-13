@@ -71,7 +71,7 @@ void setup() {
   // WriteFile("/test.txt", "Teste");
   // WriteFile("/test.txt", "SD Card - Testes");
   // ReadFile("/test.txt");
-  // WriteFile("/data_logger.txt", "");
+  WriteFile("/data_logger.txt", "");
   ReadFile("/data_logger.txt");
 }
 

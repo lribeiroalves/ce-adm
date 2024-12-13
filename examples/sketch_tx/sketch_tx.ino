@@ -44,6 +44,7 @@ void WriteData(const char * path, byte * data) {
 }
 
 void setup() {
+  delay(5000);
   Serial.begin(9600);
   Serial2.begin(1200, SERIAL_8N1, 32, 33); 
 
@@ -151,7 +152,7 @@ void loop() {
   Serial.println();
 
   // SD CARD
-  WriteData("/data_logger.txt", protocol);
+  WriteData("/teste_pat.txt", protocol);
 
   
   LED = !LED;
