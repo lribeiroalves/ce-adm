@@ -1,6 +1,35 @@
+
+#include <SPI.h>
+#include <SD.h>
+
 //#include <SoftwareSerial.h>
 #define RXD2 4
 #define TXD2 2
+
+File myFile;
+const int cs = 5;
+
+// void WriteData(const char * path, byte * data) {
+//     myFile = SD.open(path, FILE_APPEND);
+
+//   if (myFile) {
+//     for (int i = 0; i < 12; i++) {
+//       if (i == 0) {
+//         myFile.write(data[i]);
+//       }
+//       else {
+//         myFile.print(data[i]);
+//         if (i < 11) {
+//           myFile.write('/');
+//         }
+//       }
+//     }
+//     myFile.close();
+//   }
+//   else {
+//     Serial.println("Não foi possível abrir o arquivo");
+//   }
+// }
 
 void setup() {
   // Note the format for setting a serial port is as follows: Serial2.begin(baud-rate, protocol, RX pin, TX pin);
@@ -8,6 +37,14 @@ void setup() {
   //Serial1.begin(9600, SERIAL_8N1, RXD2, TXD2);
   Serial2.begin(1200, SERIAL_8N1, RXD2, TXD2);
   Serial.println("Iniciando RX");
+
+  // Inicialização do Cartão SD
+  // Serial.println("Inicializando SD Card");
+  // if (!SD.begin(cs)) {
+  //   Serial.println("Falha na Inicialização do cartão SD");
+  //   return;
+  // }
+  // Serial.println("Inicialização do cartão SD concluída.");
 }
 
 //const int size_msg = 13;
@@ -33,8 +70,13 @@ void loop() {
 
     for (int i = 0; i < size_msg; i++) {
       Serial.print(input[i]);
-      Serial.print(" ");
+      if (i < size_msg - 1) {
+        Serial.print(" ");
+      }
     }
+    Serial.println();
+
+    // WriteData("/data_logger.txt", input);
 
     //Serial.println();
 

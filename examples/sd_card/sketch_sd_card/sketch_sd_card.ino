@@ -12,7 +12,7 @@
 #include <SD.h>
 
 File myFile;
-int cs = 2;
+int cs = 5;
 int sck = 4;
 int mosi = 16;
 int miso = 17;
@@ -60,7 +60,7 @@ void setup() {
   while (!Serial) {;}
   
   Serial.println("Inicializando SD Card");
-  SPI.begin(sck, miso, mosi, cs);
+  // SPI.begin(sck, miso, mosi, cs);
   if (!SD.begin(cs)) {
     Serial.println("Falha na Inicialização");
     return;
@@ -69,8 +69,10 @@ void setup() {
 
   // WriteFile("/test.txt", "Novo");
   // WriteFile("/test.txt", "Teste");
-  WriteFile("/test.txt", "SD Card - Testes");
-  ReadFile("/test.txt");
+  // WriteFile("/test.txt", "SD Card - Testes");
+  // ReadFile("/test.txt");
+  // WriteFile("/data_logger.txt", "");
+  ReadFile("/data_logger.txt");
 }
 
 void loop() {

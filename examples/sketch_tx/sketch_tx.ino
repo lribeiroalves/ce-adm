@@ -19,12 +19,24 @@ byte protocol[12];
 bool LED;
 File myFile;
 const int cs = 5;
+int first_time = 1;
 
-void WriteData(const char * path, const char * data) {
-  myFile = SD.open(path, FILE_APPEND);
+void WriteData(const char * path, byte * data) {
+    myFile = SD.open(path, FILE_APPEND);
 
   if (myFile) {
-    // escrever msg no SD
+    for (int i = 0; i < 12; i++) {
+      if (i == 0) {
+        myFile.write(data[i]);
+      }
+      else {
+        myFile.print(data[i]);
+        if (i < 11) {
+          myFile.write('/');
+        }
+      }
+    }
+    myFile.close();
   }
   else {
     Serial.println("Não foi possível abrir o arquivo");
@@ -99,15 +111,15 @@ void loop() {
 
   //UMIDADE
   int8_t h = dht.readHumidity();
-  protocol[6] = h;
+  protocol[7] = h;
   if (isnan(h))
   {
     protocol[7] = 254;
   }
   
   float t = dht.readTemperature();
-  int8_t tFormat = (t * 10)/2;
-  protocol[7] = tFormat;
+  int8_t tFormat = (t * 5);
+  protocol[8] = tFormat;
   if (isnan(t))
   {
     protocol[8] = 254;
@@ -121,7 +133,7 @@ void loop() {
   protocol[5] = rtc.getMinute();
 	protocol[6] = rtc.getSecond();
 
-  protocol[0] = ","; //enviando a vírgula dentro do pacote
+  protocol[0] = ','; //enviando a vírgula dentro do pacote
 
   //ESCRITA
   // Serial2.write(",");
@@ -133,10 +145,14 @@ void loop() {
   //  PARA VISUALIZAÇÃO DOS ARQUIVOS NO PROMPT
   for(__int8_t i = 0; i < 12; i++)
   {
-    Serial.print(protocol[i], HEX);
+    Serial.print(protocol[i]);
     Serial.print("  ");
   }
   Serial.println();
+
+  // SD CARD
+  WriteData("/data_logger.txt", protocol);
+
   
   LED = !LED;
   digitalWrite(BUILT_LED,LED);
