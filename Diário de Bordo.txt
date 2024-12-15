@@ -2,3 +2,10 @@
 Monitoramento a partir da torre do EPB.
 Solicitado acesso para teste de cobertura no PAT, mas devido a problema de MO não foi possível.
 Instalação em BEL de deu após o fim da atividade normal.
+
+12/12/24 - Não foi possível resgatar o protótipo na via em BEL devido a energização.
+Cancelada a ida ao PAT devido a falta de rádio.
+Resgatado o Receptor na torre após as atividades e instalado na Sala 28.
+O mesmo apresenta perdas de pacote devido a distância, e pela análise "por cima", a mesma deve ocorrer quando passam trens entre a caixa e a antena, pois os dados de vibração quase não aparecem.
+
+13/12/24 -  
