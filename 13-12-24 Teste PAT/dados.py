@@ -46,8 +46,8 @@ dados_uteis.describe()
 #%% Gráficos
 
 plt.figure(figsize=(15,9), dpi=600)
-sns.lineplot(data=dados_uteis, x='date', y='umid')
-sns.lineplot(data=dados_uteis, x='date', y='temp')
+# sns.lineplot(data=dados_uteis, x='date', y='umid')
+# sns.lineplot(data=dados_uteis, x='date', y='temp')
 sns.lineplot(data=dados_uteis, x='date', y='gX')
 sns.lineplot(data=dados_uteis, x='date', y='gY')
 sns.lineplot(data=dados_uteis, x='date', y='gZ')
