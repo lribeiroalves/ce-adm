@@ -39,7 +39,7 @@ String LoRaData;
 
 void setup() { 
   //initialize Serial Monitor
-  Serial.begin(115200);
+  Serial.begin(1200);
   
   //reset OLED display via software
   pinMode(OLED_RST, OUTPUT);
