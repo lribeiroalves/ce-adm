@@ -4,8 +4,8 @@
 *********/
 
 //Libraries for LoRa
-// #include <SPI.h>
-// #include <LoRa.h>
+#include <SPI.h>
+#include <LoRa.h>
 
 //Libraries for OLED Display
 #include <Wire.h>
@@ -23,7 +23,7 @@
 //433E6 for Asia
 //866E6 for Europe
 //915E6 for North America
-// #define BAND 866E6
+#define BAND 915E6
 
 //OLED pins
 #define OLED_SDA 4
@@ -64,14 +64,14 @@ void setup() {
   Serial.println("LoRa Sender Test");
 
   //SPI LoRa pins
-  // SPI.begin(SCK, MISO, MOSI, SS);
-  //setup LoRa transceiver module
-  // LoRa.setPins(SS, RST, DIO0);
+  SPI.begin(SCK, MISO, MOSI, SS);
+  // setup LoRa transceiver module
+  LoRa.setPins(SS, RST, DIO0);
   
-  // if (!LoRa.begin(BAND)) {
-  //   Serial.println("Starting LoRa failed!");
-  //   while (1);
-  // }
+  if (!LoRa.begin(BAND)) {
+    Serial.println("Starting LoRa failed!");
+    while (1);
+  }
   Serial.println("LoRa Initializing OK!");
   display.setCursor(0,10);
   display.print("LoRa Initializing OK!");
@@ -85,10 +85,10 @@ void loop() {
   Serial.println(counter);
 
   //Send LoRa packet to receiver
-  // LoRa.beginPacket();
-  // LoRa.print("hello ");
-  // LoRa.print(counter);
-  // LoRa.endPacket();
+  LoRa.beginPacket();
+  LoRa.print("hello ");
+  LoRa.print(counter);
+  LoRa.endPacket();
   
   display.clearDisplay();
   display.setCursor(0,0);

@@ -94,7 +94,7 @@ void loop() {
 
     //print RSSI of packet
     int rssi = LoRa.packetRssi();
-    Serial.print(" with RSSI ");    
+    Serial.print(" with RSSI ");
     Serial.println(rssi);
 
    // Dsiplay information
