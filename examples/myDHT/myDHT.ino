@@ -1,6 +1,6 @@
 #include "dht_lib.h"
 
-MyDHT dht = MyDHT(2, 11);
+MyDHT dht = MyDHT(23, 11);
 
 void setup() {
   // put your setup code here, to run once:
