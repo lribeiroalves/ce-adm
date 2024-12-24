@@ -8,15 +8,14 @@ class UMTE {
   
 private:
   int dht_pin;
-  int sensor_type;
   DHT dht;
   int readings_time; // ms
   unsigned long prev_time = 0;
 
 public:
   // método construtor, usando initialization list para instanciar um objeto da classe DHT
-  UMTE(int pin, int sensor, int time)
-    : dht_pin(pin), sensor_type(sensor), dht(DHT(dht_pin, sensor_type))
+  UMTE(int pin, int time)
+    : dht_pin(pin), dht(DHT(dht_pin, 11))
   {
     readings_time = time;
     dht.begin();
