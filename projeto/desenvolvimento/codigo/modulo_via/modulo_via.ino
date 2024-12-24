@@ -2,6 +2,7 @@
 #include "gyro.h"         // leitura de dados do giroscopio
 // #include "clock.h"        // controle do RTC
 // #include "salva_dados.h"  // salvamento local dos dados adquiridos
+#include "Wire.h"
 
 // PINAGEM
 #define DHT_PIN 33
@@ -21,8 +22,9 @@ GYRO gyro = GYRO();
 // VARIAVEIS GLOBAIS
 
 void setup() {
-  Serial.begin(9600);
-  delay(2000);
+  Serial.begin(115200);
+  gyro.begin();
+}
 
 void loop() {
   byte* leitura = gyro.read_gyro();
@@ -34,6 +36,5 @@ void loop() {
 
   Serial.println();
 
-  delay(1000);
-
+  delay(500);
 }
