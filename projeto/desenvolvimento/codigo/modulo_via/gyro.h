@@ -54,6 +54,8 @@ public:
 
     return leitura;
   }
+
+  // criar método para realizar leituras a cada 100ms usado millis e ir armazenando o maior valor encontrado das leituras
 };
 
 #endif

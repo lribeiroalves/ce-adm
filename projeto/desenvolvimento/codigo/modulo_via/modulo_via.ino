@@ -26,6 +26,8 @@ void setup() {
   gyro.begin();
 }
 
+// criar uma classe LORA que contenha o método update, que a cada segundo coleta os valores de cada sensor e envia pelo rádio
+
 void loop() {
   byte* leitura = gyro.read_gyro();
 
