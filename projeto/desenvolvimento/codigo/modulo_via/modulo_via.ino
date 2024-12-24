@@ -13,18 +13,20 @@ void setup() {
 }
 
 void loop() {
-  int8_t* leitura = dht.update();
+  byte* leitura = dht.update();
 
-  // Serial.println(leitura[1]);
+  if ((leitura[0] != 0) || (leitura[1] != 0)) {
+    Serial.print("Temperatura: ");
+    Serial.print(leitura[0] / 5);
+    Serial.println(" C");
+    Serial.print("Umidade: ");
+    Serial.print(leitura[1]);
+    Serial.println("%");
+    leitura[0] = 0;
+    leitura[1] = 0;
+  }
 
+  byte t = dht.temp();
+  Serial.print(t/5);
   delay(1000);
-
-  // if ((leitura[0] != 0) || (leitura[1] != 0)) {
-  //   Serial.print("Temperatura: ");
-  //   Serial.print(leitura[0] / 5);
-  //   Serial.println(" C");
-  //   Serial.print("Umidade: ");
-  //   Serial.print(leitura[1]);
-  //   Serial.println("%");
-  // }
 }
