@@ -17,26 +17,64 @@
 
 // INSTANCIAS
 UMTE dht = UMTE(DHT_PIN, 1000);
-GYRO gyro = GYRO();
+GYRO gyro = GYRO(80);
 
 // VARIAVEIS GLOBAIS
+int c = 0;
+long p_time = 0;
+long c_time = 0;
+long tempo = 0;
 
 void setup() {
+  delay(3000);
   Serial.begin(115200);
   gyro.begin();
+  delay(5000);
+  p_time = millis();
 }
 
 // criar uma classe LORA que contenha o método update, que a cada segundo coleta os valores de cada sensor e envia pelo rádio
 
 void loop() {
-  byte* leitura = gyro.read_gyro();
+  gyro.update();
 
-  for (int i = 0; i < 3; i++) {
-    Serial.print(leitura[i]);
-    Serial.print(" ");
+  if (!gyro.getEnable()) {
+    c_time = millis();
+    tempo = c_time - p_time;
+    p_time = c_time;
+
+    byte* l = gyro.getReadings();
+    for (int i = 0; i < 3; i++) {
+      Serial.print(l[i]);
+      Serial.print(" ");
+    }
+
+    Serial.println();
+    Serial.print("tempo: ");
+    Serial.print(tempo);
+    Serial.println("ms");
+
+    gyro.enableUpdate();
   }
 
-  Serial.println();
+  // Serial.println(gyro.getEnable());
 
-  delay(500);
+
+  //   for (int i = 0; i < 3; i++) {
+  //     Serial.print(l[i]);
+  //     Serial.print(" ");
+  //   }
+
+  // gyro.update();
+
+  // Serial.println();
+
+  // delay(1000);
+
+  // c++;
+
+  // if (c >= 20) {
+  //   gyro.enableUpdate();
+  //   c = 0;
+  // }
 }

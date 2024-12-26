@@ -44,6 +44,8 @@ public:
     }
   }
 
+  // ATUALIZAR O UPDATE PARA O PADRÃO DO GIROSCOPIO
+
   // realiza a leitura caso o período de tempo determinado em readings_time (ms) tenha passado
   byte* update() {
     static byte readings[2] = {0, 0};
