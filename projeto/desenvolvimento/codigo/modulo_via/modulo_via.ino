@@ -18,7 +18,7 @@
 
 // INSTANCIAS
 UMTE dht = UMTE(DHT_PIN, 1000);
-GYRO gyro = GYRO(10);
+GYRO gyro = GYRO(100);
 
 // VARIAVEIS GLOBAIS
 int c = 0;
@@ -38,8 +38,9 @@ void setup() {
 
 void loop() {
   gyro.update();
+  dht.update();
 
-  if (!gyro.getEnable()) {
+  if (!gyro.getEnable() && !dht.getEnable()) {
     c_time = millis();
     tempo = c_time - p_time;
     p_time = c_time;
@@ -51,10 +52,20 @@ void loop() {
     }
 
     Serial.println();
+
+    byte* t = dht.getReadings();
+    Serial.print("Temperatura: ");
+    Serial.print(t[0]/5);
+    Serial.println("C");
+    Serial.print("Umidade: ");
+    Serial.print(t[1]);
+    Serial.println("%");
+
     Serial.print("tempo: ");
     Serial.print(tempo);
     Serial.println("ms");
 
     gyro.enableUpdate();
+    dht.enableUpdate();
   }
 }
