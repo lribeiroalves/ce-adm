@@ -1,8 +1,8 @@
 #ifndef UMID_TEMP_LIB
 #define UMID_TEMP_LIB
 
-#include "Arduino.h"
-#include "DHT.h"
+#include <Arduino.h>
+#include <DHT.h>
 
 class UMTE {
   

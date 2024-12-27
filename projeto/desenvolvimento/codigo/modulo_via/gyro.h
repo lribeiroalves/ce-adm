@@ -1,8 +1,8 @@
 #ifndef GYRO_LIB
 #define GYRO_LIB
 
-#include "Arduino.h"
-#include "Wire.h"
+#include <Arduino.h>
+#include <Wire.h>
 
 class GYRO {
 
