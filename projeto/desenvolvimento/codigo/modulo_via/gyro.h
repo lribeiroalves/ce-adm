@@ -48,9 +48,9 @@ public:
     gz = Wire.read() << 8 | Wire.read();
 
     // tratar e armazenar os valores em um array
-    leitura[0] = (byte) (max(0, (abs(gx) - 0)) >> 7);
-    leitura[1] = (byte) (max(0, (abs(gy) - 0)) >> 7);
-    leitura[2] = (byte) (max(0, (abs(gz) - 0)) >> 7);
+    leitura[0] = (byte) (max(0, (abs(gx) - 150)) >> 7);
+    leitura[1] = (byte) (max(0, (abs(gy) - 150)) >> 7);
+    leitura[2] = (byte) (max(0, (abs(gz) - 150)) >> 7);
 
     return leitura;
   }  

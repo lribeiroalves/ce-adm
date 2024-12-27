@@ -1,6 +1,7 @@
 #include "umid_temp.h"    // leitura dados do sensor de umidade e temperatura
 #include "gyro.h"         // leitura de dados do giroscopio
 // #include "clock.h"        // controle do RTC
+// #include "clock.h"        // controle do RTC
 // #include "salva_dados.h"  // salvamento local dos dados adquiridos
 #include "Wire.h"
 
@@ -17,7 +18,7 @@
 
 // INSTANCIAS
 UMTE dht = UMTE(DHT_PIN, 1000);
-GYRO gyro = GYRO(80);
+GYRO gyro = GYRO(10);
 
 // VARIAVEIS GLOBAIS
 int c = 0;
@@ -56,25 +57,4 @@ void loop() {
 
     gyro.enableUpdate();
   }
-
-  // Serial.println(gyro.getEnable());
-
-
-  //   for (int i = 0; i < 3; i++) {
-  //     Serial.print(l[i]);
-  //     Serial.print(" ");
-  //   }
-
-  // gyro.update();
-
-  // Serial.println();
-
-  // delay(1000);
-
-  // c++;
-
-  // if (c >= 20) {
-  //   gyro.enableUpdate();
-  //   c = 0;
-  // }
 }
