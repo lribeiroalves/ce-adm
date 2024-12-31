@@ -1,0 +1,237 @@
+17:50:25.893 [MainThread] INFO    thonny: Thonny version: 4.1.7
+17:50:25.893 [MainThread] INFO    thonny: cwd: C:\Users\lucas
+17:50:25.893 [MainThread] INFO    thonny: original argv: ['D:\\Lucas Ribeiro\\Programas\\ESP32\\MicroPython\\thonny-4.1.7-windows-portable\\python.exe', '-s', '-u', '-B', 'D:\\Lucas Ribeiro\\Programas\\ESP32\\MicroPython\\thonny-4.1.7-windows-portable\\lib\\site-packages\\thonny\\plugins\\esp\\esp_back.py', "{'clean': True, 'port': 'COM5', 'dtr': None, 'rts': None, 'submit_mode': None, 'interrupt_on_connect': True, 'write_block_size': None, 'write_block_delay': None, 'proxy_class': 'ESP32Proxy', 'sync_time': True, 'validate_time': False, 'local_rtc': True}"]
+17:50:25.894 [MainThread] INFO    thonny: sys.executable: D:\Lucas Ribeiro\Programas\ESP32\MicroPython\thonny-4.1.7-windows-portable\python.exe
+17:50:25.894 [MainThread] INFO    thonny: sys.argv: ['D:\\Lucas Ribeiro\\Programas\\ESP32\\MicroPython\\thonny-4.1.7-windows-portable\\lib\\site-packages\\thonny\\plugins\\esp\\esp_back.py', "{'clean': True, 'port': 'COM5', 'dtr': None, 'rts': None, 'submit_mode': None, 'interrupt_on_connect': True, 'write_block_size': None, 'write_block_delay': None, 'proxy_class': 'ESP32Proxy', 'sync_time': True, 'validate_time': False, 'local_rtc': True}"]
+17:50:25.894 [MainThread] INFO    thonny: sys.path: ['D:\\Lucas Ribeiro\\Programas\\ESP32\\MicroPython\\thonny-4.1.7-windows-portable\\lib\\site-packages\\thonny\\plugins\\esp', 'D:\\Lucas Ribeiro\\Programas\\ESP32\\MicroPython\\thonny-4.1.7-windows-portable\\python310.zip', 'D:\\Lucas Ribeiro\\Programas\\ESP32\\MicroPython\\thonny-4.1.7-windows-portable\\DLLs', 'D:\\Lucas Ribeiro\\Programas\\ESP32\\MicroPython\\thonny-4.1.7-windows-portable\\lib', 'D:\\Lucas Ribeiro\\Programas\\ESP32\\MicroPython\\thonny-4.1.7-windows-portable', 'D:\\Lucas Ribeiro\\Programas\\ESP32\\MicroPython\\thonny-4.1.7-windows-portable\\lib\\site-packages']
+17:50:25.894 [MainThread] INFO    thonny: sys.flags: sys.flags(debug=0, inspect=0, interactive=0, optimize=0, dont_write_bytecode=1, no_user_site=1, no_site=0, ignore_environment=0, verbose=0, bytes_warning=0, quiet=0, hash_randomization=1, isolated=0, dev_mode=False, utf8_mode=0, warn_default_encoding=0, int_max_str_digits=-1)
+17:50:25.894 [MainThread] INFO    thonny.plugins.micropython.bare_metal_backend: Starting backend, args: {'clean': True, 'port': 'COM5', 'dtr': None, 'rts': None, 'submit_mode': None, 'interrupt_on_connect': True, 'write_block_size': None, 'write_block_delay': None, 'proxy_class': 'ESP32Proxy', 'sync_time': True, 'validate_time': False, 'local_rtc': True}
+17:50:25.995 [MainThread] INFO    thonny.plugins.micropython.bare_metal_backend: Initial submit_mode: raw_paste, write_block_size: 127, write_block_delay: 0, read_block_size: 0
+17:50:25.996 [MainThread] INFO    thonny.plugins.micropython.mp_back: Initializing MicroPythonBackend of type EspMicroPythonBackend
+17:50:25.996 [MainThread] INFO    thonny: TIME/MODS 0.171 before prepare (+73 modules)
+17:50:25.996 [MainThread] INFO    thonny: NEW MODS ['__future__', '_bz2', '_compression', '_ctypes', '_datetime', '_heapq', '_lzma', '_queue', '_struct', '_tkinter', 'binascii', 'bz2', 'ctypes', 'ctypes._endian', 'ctypes.wintypes', 'datetime', 'encodings.ascii', 'errno', 'faulthandler', 'fnmatch', 'gettext', 'heapq', 'lzma', 'math', 'msvcrt', 'pathlib', 'platform', 'posixpath', 'queue', 'serial', 'serial.serialutil', 'serial.serialwin32', 'serial.win32', 'shlex', 'shutil', 'signal', 'struct', 'subprocess', 'textwrap', 'thonny.backend', 'thonny.base_file_browser', 'thonny.codeview', 'thonny.config_ui', 'thonny.editors', 'thonny.languages', 'thonny.misc_utils', 'thonny.plugins', 'thonny.plugins.backend_config_page', 'thonny.plugins.micropython', 'thonny.plugins.micropython.bare_metal_backend', 'thonny.plugins.micropython.connection', 'thonny.plugins.micropython.mp_back', 'thonny.plugins.micropython.mp_common', 'thonny.plugins.micropython.mp_front', 'thonny.plugins.micropython.serial_connection', 'thonny.plugins.micropython.webrepl_connection', 'thonny.roughparse', 'thonny.running', 'thonny.tktextext', 'thonny.ui_utils', 'thonny.workdlg', 'tkinter', 'tkinter.commondialog', 'tkinter.constants', 'tkinter.dialog', 'tkinter.filedialog', 'tkinter.font', 'tkinter.messagebox', 'tkinter.simpledialog', 'tkinter.ttk', 'urllib', 'urllib.parse', 'zlib']
+17:50:25.996 [MainThread] INFO    thonny.plugins.micropython.mp_back: Sending interrupt
+17:50:25.997 [MainThread] INFO    thonny.plugins.micropython.mp_back: Done sending interrupt
+17:50:26.117 [MainThread] INFO    thonny.plugins.micropython.mp_back: Sending interrupt
+17:50:26.118 [MainThread] INFO    thonny.plugins.micropython.mp_back: Done sending interrupt
+17:50:26.242 [MainThread] INFO    thonny.plugins.micropython.mp_back: Sending interrupt
+17:50:26.242 [MainThread] INFO    thonny.plugins.micropython.mp_back: Done sending interrupt
+17:50:28.469 [MainThread] INFO    thonny.plugins.micropython.bare_metal_backend: Giving advice
+17:50:35.520 [Thread-2 (_read_incoming_messages)] INFO    thonny.plugins.micropython.mp_back: Sending interrupt
+17:50:35.521 [Thread-2 (_read_incoming_messages)] INFO    thonny.plugins.micropython.mp_back: Done sending interrupt
+17:50:35.556 [MainThread] INFO    thonny.plugins.micropython.bare_metal_backend: Requesting raw mode at b'>>> '
+17:50:35.567 [MainThread] INFO    thonny.plugins.micropython.bare_metal_backend: Discarding stdout: '\r\n'
+17:50:35.588 [MainThread] INFO    thonny.plugins.micropython.bare_metal_backend: Discarding stdout: ''
+17:50:35.588 [MainThread] INFO    thonny.plugins.micropython.bare_metal_backend: Entered raw prompt
+17:50:35.698 [MainThread] INFO    thonny: TIME/MODS 9.702 got welcome 
+17:50:35.698 [MainThread] INFO    thonny: TIME/MODS 0.000 bef preparing helpers 
+17:50:35.698 [MainThread] INFO    thonny.plugins.micropython.mp_back: Preparing helpers
+17:50:35.698 [MainThread] INFO    thonny: TIME/MODS 0.000 befsubcode 
+17:50:35.698 [MainThread] INFO    thonny.plugins.micropython.bare_metal_backend: Requesting raw mode at b'>>> '
+17:50:35.707 [MainThread] INFO    thonny.plugins.micropython.bare_metal_backend: Discarding stdout: '\r\n'
+17:50:35.728 [MainThread] INFO    thonny.plugins.micropython.bare_metal_backend: Discarding stdout: ''
+17:50:35.728 [MainThread] INFO    thonny.plugins.micropython.bare_metal_backend: Entered raw prompt
+17:50:35.876 [MainThread] INFO    thonny: TIME/MODS 0.179 affsubcode 
+17:50:35.901 [MainThread] INFO    thonny: TIME/MODS 0.024 affforw 
+17:50:35.901 [MainThread] INFO    thonny: TIME/MODS 0.000 prepared helpers 
+17:50:35.901 [MainThread] INFO    thonny: TIME/MODS 0.000 befsubcode 
+17:50:35.917 [MainThread] INFO    thonny: TIME/MODS 0.016 affsubcode 
+17:50:35.947 [MainThread] INFO    thonny: TIME/MODS 0.030 affforw 
+17:50:35.947 [MainThread] INFO    thonny: TIME/MODS 0.000 got cwd 
+17:50:35.947 [MainThread] INFO    thonny: TIME/MODS 0.000 befsubcode 
+17:50:35.966 [MainThread] INFO    thonny: TIME/MODS 0.020 affsubcode 
+17:50:35.994 [MainThread] INFO    thonny: TIME/MODS 0.028 affforw 
+17:50:35.994 [MainThread] INFO    thonny: TIME/MODS 0.000 prepared 
+17:50:35.994 [MainThread] INFO    thonny.plugins.micropython.mp_back: Prepared
+17:50:35.994 [MainThread] INFO    thonny: TIME/MODS 0.000 befsubcode 
+17:50:36.007 [MainThread] INFO    thonny: TIME/MODS 0.013 affsubcode 
+17:50:36.120 [MainThread] INFO    thonny: TIME/MODS 0.113 affforw 
+17:50:36.120 [MainThread] INFO    thonny: TIME/MODS 0.000 befsubcode 
+17:50:36.157 [MainThread] INFO    thonny: TIME/MODS 0.037 affsubcode 
+17:50:36.230 [MainThread] INFO    thonny: TIME/MODS 0.073 affforw 
+17:50:36.230 [MainThread] INFO    thonny: TIME/MODS 0.000 befsubcode 
+17:50:36.277 [MainThread] INFO    thonny: TIME/MODS 0.048 affsubcode 
+17:50:36.340 [MainThread] INFO    thonny: TIME/MODS 0.063 affforw 
+17:50:36.340 [MainThread] INFO    thonny.backend: Loading Jedi
+17:50:36.340 [MainThread] INFO    thonny: TIME/MODS 0.000 Before loading Jedi 
+17:50:36.340 [MainThread] INFO    thonny.common: Using THONNY_FRONTEND_SYS_PATH ['D:\\Lucas Ribeiro\\Programas\\ESP32\\MicroPython\\thonny-4.1.7-windows-portable\\python310.zip', 'D:\\Lucas Ribeiro\\Programas\\ESP32\\MicroPython\\thonny-4.1.7-windows-portable\\DLLs', 'D:\\Lucas Ribeiro\\Programas\\ESP32\\MicroPython\\thonny-4.1.7-windows-portable\\lib', 'D:\\Lucas Ribeiro\\Programas\\ESP32\\MicroPython\\thonny-4.1.7-windows-portable', 'D:\\Lucas Ribeiro\\Programas\\ESP32\\MicroPython\\thonny-4.1.7-windows-portable\\lib\\site-packages', 'D:\\Lucas Ribeiro\\Programas\\ESP32\\MicroPython\\thonny-4.1.7-windows-portable\\user_data\\plugins\\Python310\\site-packages']
+17:50:36.474 [MainThread] INFO    thonny: TIME/MODS 0.133 After loading Jedi (+124 modules)
+17:50:36.474 [MainThread] INFO    thonny: NEW MODS ['_blake2', '_compat_pickle', '_hashlib', '_json', '_pickle', '_socket', 'difflib', 'filecmp', 'gc', 'hashlib', 'importlib._abc', 'importlib.util', 'jedi', 'jedi._compatibility', 'jedi.api', 'jedi.api.classes', 'jedi.api.completion', 'jedi.api.completion_cache', 'jedi.api.environment', 'jedi.api.errors', 'jedi.api.exceptions', 'jedi.api.file_name', 'jedi.api.helpers', 'jedi.api.interpreter', 'jedi.api.keywords', 'jedi.api.project', 'jedi.api.refactoring', 'jedi.api.refactoring.extract', 'jedi.api.strings', 'jedi.cache', 'jedi.common', 'jedi.debug', 'jedi.file_io', 'jedi.inference', 'jedi.inference.analysis', 'jedi.inference.arguments', 'jedi.inference.base_value', 'jedi.inference.cache', 'jedi.inference.compiled', 'jedi.inference.compiled.access', 'jedi.inference.compiled.getattr_static', 'jedi.inference.compiled.mixed', 'jedi.inference.compiled.subprocess', 'jedi.inference.compiled.subprocess.functions', 'jedi.inference.compiled.value', 'jedi.inference.context', 'jedi.inference.docstring_utils', 'jedi.inference.docstrings', 'jedi.inference.filters', 'jedi.inference.flow_analysis', 'jedi.inference.gradual', 'jedi.inference.gradual.annotation', 'jedi.inference.gradual.base', 'jedi.inference.gradual.conversion', 'jedi.inference.gradual.generics', 'jedi.inference.gradual.stub_value', 'jedi.inference.gradual.type_var', 'jedi.inference.gradual.typeshed', 'jedi.inference.gradual.typing', 'jedi.inference.gradual.utils', 'jedi.inference.helpers', 'jedi.inference.imports', 'jedi.inference.lazy_value', 'jedi.inference.names', 'jedi.inference.param', 'jedi.inference.parser_cache', 'jedi.inference.recursion', 'jedi.inference.references', 'jedi.inference.signature', 'jedi.inference.syntax_tree', 'jedi.inference.sys_path', 'jedi.inference.utils', 'jedi.inference.value', 'jedi.inference.value.decorator', 'jedi.inference.value.dynamic_arrays', 'jedi.inference.value.function', 'jedi.inference.value.instance', 'jedi.inference.value.iterable', 'jedi.inference.value.klass', 'jedi.inference.value.module', 'jedi.inference.value.namespace', 'jedi.parser_utils', 'jedi.plugins', 'jedi.plugins.django', 'jedi.plugins.flask', 'jedi.plugins.pytest', 'jedi.plugins.registry', 'jedi.plugins.stdlib', 'jedi.settings', 'json', 'json.decoder', 'json.encoder', 'json.scanner', 'parso', 'parso._compatibility', 'parso.cache', 'parso.file_io', 'parso.grammar', 'parso.normalizer', 'parso.parser', 'parso.pgen2', 'parso.pgen2.generator', 'parso.pgen2.grammar_parser', 'parso.python', 'parso.python.diff', 'parso.python.errors', 'parso.python.parser', 'parso.python.pep8', 'parso.python.prefix', 'parso.python.token', 'parso.python.tokenize', 'parso.python.tree', 'parso.tree', 'parso.utils', 'pickle', 'pkgutil', 'pydoc', 'pydoc_data', 'pydoc_data.topics', 'select', 'selectors', 'socket', 'sysconfig', 'zipfile']
+17:50:36.475 [MainThread] INFO    thonny: TIME/MODS 0.001 sent ready 
+17:50:36.475 [MainThread] INFO    thonny: TIME/MODS 0.000 Beginning of mainloop 
+17:50:36.475 [MainThread] INFO    thonny: TIME/MODS 0.000 before get_globals 
+17:50:36.475 [MainThread] INFO    thonny: TIME/MODS 0.000 befsubcode 
+17:50:36.498 [MainThread] INFO    thonny: TIME/MODS 0.023 affsubcode 
+17:50:36.546 [MainThread] INFO    thonny: TIME/MODS 0.048 affforw 
+17:50:36.546 [MainThread] INFO    thonny: TIME/MODS 0.000 after get_globals 
+17:50:36.546 [MainThread] INFO    thonny: TIME/MODS 0.000 before Run 
+17:50:36.626 [MainThread] INFO    thonny: TIME/MODS 0.080 befsubcode 
+17:50:36.877 [MainThread] INFO    thonny: TIME/MODS 0.251 affsubcode 
+17:57:15.586 [Thread-2 (_read_incoming_messages)] INFO    thonny.plugins.micropython.mp_back: Sending interrupt
+17:57:15.586 [Thread-2 (_read_incoming_messages)] INFO    thonny.plugins.micropython.mp_back: Done sending interrupt
+17:57:15.621 [MainThread] INFO    thonny: TIME/MODS 398.744 affforw 
+17:57:15.621 [MainThread] INFO    thonny: TIME/MODS 0.000 bef preparing helpers 
+17:57:15.621 [MainThread] INFO    thonny.plugins.micropython.mp_back: Preparing helpers
+17:57:15.621 [MainThread] INFO    thonny: TIME/MODS 0.000 befsubcode 
+17:57:15.766 [MainThread] INFO    thonny: TIME/MODS 0.145 affsubcode 
+17:57:15.794 [MainThread] INFO    thonny: TIME/MODS 0.028 affforw 
+17:57:15.794 [MainThread] INFO    thonny: TIME/MODS 0.000 prepared helpers 
+17:57:15.794 [MainThread] INFO    thonny: TIME/MODS 0.000 befsubcode 
+17:57:15.806 [MainThread] INFO    thonny: TIME/MODS 0.012 affsubcode 
+17:57:15.826 [MainThread] INFO    thonny: TIME/MODS 0.020 affforw 
+17:57:15.826 [MainThread] INFO    thonny: TIME/MODS 0.000 got cwd 
+17:57:15.826 [MainThread] INFO    thonny: TIME/MODS 0.000 befsubcode 
+17:57:15.846 [MainThread] INFO    thonny: TIME/MODS 0.020 affsubcode 
+17:57:15.873 [MainThread] INFO    thonny: TIME/MODS 0.027 affforw 
+17:57:15.873 [MainThread] INFO    thonny: TIME/MODS 0.000 prepared 
+17:57:15.873 [MainThread] INFO    thonny.plugins.micropython.mp_back: Prepared
+17:57:15.873 [MainThread] INFO    thonny: TIME/MODS 0.000 after Run 
+17:57:15.917 [MainThread] INFO    thonny: TIME/MODS 0.044 before get_globals 
+17:57:15.917 [MainThread] INFO    thonny: TIME/MODS 0.000 befsubcode 
+17:57:15.948 [MainThread] INFO    thonny: TIME/MODS 0.030 affsubcode 
+17:57:16.046 [MainThread] INFO    thonny: TIME/MODS 0.100 affforw 
+17:57:16.046 [MainThread] INFO    thonny: TIME/MODS 0.000 after get_globals 
+17:57:33.573 [MainThread] INFO    thonny: TIME/MODS 17.527 before highlight_occurrences 
+17:57:33.888 [MainThread] INFO    thonny: TIME/MODS 0.315 after highlight_occurrences (+1 modules)
+17:57:33.888 [MainThread] INFO    thonny: NEW MODS ['thonny.jedi_utils']
+17:57:34.591 [MainThread] INFO    thonny: TIME/MODS 0.703 before editor_autocomplete 
+17:57:34.594 [MainThread] INFO    thonny: TIME/MODS 0.003 after editor_autocomplete 
+17:57:34.957 [MainThread] INFO    thonny: TIME/MODS 0.363 before highlight_occurrences 
+17:57:34.960 [MainThread] INFO    thonny: TIME/MODS 0.003 after highlight_occurrences 
+17:57:36.572 [MainThread] INFO    thonny: TIME/MODS 1.612 before Run 
+17:57:36.641 [MainThread] INFO    thonny: TIME/MODS 0.070 befsubcode 
+17:57:36.885 [MainThread] INFO    thonny: TIME/MODS 0.244 affsubcode 
+17:59:02.067 [Thread-2 (_read_incoming_messages)] INFO    thonny.plugins.micropython.mp_back: Sending interrupt
+17:59:02.067 [Thread-2 (_read_incoming_messages)] INFO    thonny.plugins.micropython.mp_back: Done sending interrupt
+17:59:02.096 [MainThread] INFO    thonny: TIME/MODS 85.211 affforw 
+17:59:02.096 [MainThread] INFO    thonny: TIME/MODS 0.000 bef preparing helpers 
+17:59:02.096 [MainThread] INFO    thonny.plugins.micropython.mp_back: Preparing helpers
+17:59:02.096 [MainThread] INFO    thonny: TIME/MODS 0.000 befsubcode 
+17:59:02.240 [MainThread] INFO    thonny: TIME/MODS 0.144 affsubcode 
+17:59:02.269 [MainThread] INFO    thonny: TIME/MODS 0.030 affforw 
+17:59:02.269 [MainThread] INFO    thonny: TIME/MODS 0.000 prepared helpers 
+17:59:02.269 [MainThread] INFO    thonny: TIME/MODS 0.000 befsubcode 
+17:59:02.291 [MainThread] INFO    thonny: TIME/MODS 0.022 affsubcode 
+17:59:02.315 [MainThread] INFO    thonny: TIME/MODS 0.024 affforw 
+17:59:02.315 [MainThread] INFO    thonny: TIME/MODS 0.000 got cwd 
+17:59:02.315 [MainThread] INFO    thonny: TIME/MODS 0.000 befsubcode 
+17:59:02.330 [MainThread] INFO    thonny: TIME/MODS 0.015 affsubcode 
+17:59:02.347 [MainThread] INFO    thonny: TIME/MODS 0.017 affforw 
+17:59:02.347 [MainThread] INFO    thonny: TIME/MODS 0.000 prepared 
+17:59:02.347 [MainThread] INFO    thonny.plugins.micropython.mp_back: Prepared
+17:59:02.347 [MainThread] INFO    thonny: TIME/MODS 0.000 after Run 
+17:59:02.368 [MainThread] INFO    thonny: TIME/MODS 0.021 before get_globals 
+17:59:02.368 [MainThread] INFO    thonny: TIME/MODS 0.000 befsubcode 
+17:59:02.392 [MainThread] INFO    thonny: TIME/MODS 0.024 affsubcode 
+17:59:02.475 [MainThread] INFO    thonny: TIME/MODS 0.083 affforw 
+17:59:02.475 [MainThread] INFO    thonny: TIME/MODS 0.000 after get_globals 
+17:59:04.100 [MainThread] INFO    thonny: TIME/MODS 1.625 before Run 
+17:59:04.183 [MainThread] INFO    thonny: TIME/MODS 0.083 befsubcode 
+17:59:04.430 [MainThread] INFO    thonny: TIME/MODS 0.247 affsubcode 
+17:59:21.395 [Thread-2 (_read_incoming_messages)] INFO    thonny.plugins.micropython.mp_back: Sending interrupt
+17:59:21.395 [Thread-2 (_read_incoming_messages)] INFO    thonny.plugins.micropython.mp_back: Done sending interrupt
+17:59:21.436 [MainThread] INFO    thonny: TIME/MODS 17.006 affforw 
+17:59:21.436 [MainThread] INFO    thonny: TIME/MODS 0.000 bef preparing helpers 
+17:59:21.436 [MainThread] INFO    thonny.plugins.micropython.mp_back: Preparing helpers
+17:59:21.436 [MainThread] INFO    thonny: TIME/MODS 0.000 befsubcode 
+17:59:21.571 [MainThread] INFO    thonny: TIME/MODS 0.135 affsubcode 
+17:59:21.596 [MainThread] INFO    thonny: TIME/MODS 0.025 affforw 
+17:59:21.596 [MainThread] INFO    thonny: TIME/MODS 0.000 prepared helpers 
+17:59:21.596 [MainThread] INFO    thonny: TIME/MODS 0.000 befsubcode 
+17:59:21.609 [MainThread] INFO    thonny: TIME/MODS 0.014 affsubcode 
+17:59:21.626 [MainThread] INFO    thonny: TIME/MODS 0.017 affforw 
+17:59:21.626 [MainThread] INFO    thonny: TIME/MODS 0.000 got cwd 
+17:59:21.626 [MainThread] INFO    thonny: TIME/MODS 0.000 befsubcode 
+17:59:21.639 [MainThread] INFO    thonny: TIME/MODS 0.013 affsubcode 
+17:59:21.658 [MainThread] INFO    thonny: TIME/MODS 0.019 affforw 
+17:59:21.658 [MainThread] INFO    thonny: TIME/MODS 0.000 prepared 
+17:59:21.658 [MainThread] INFO    thonny.plugins.micropython.mp_back: Prepared
+17:59:21.658 [MainThread] INFO    thonny: TIME/MODS 0.000 after Run 
+17:59:21.677 [MainThread] INFO    thonny: TIME/MODS 0.019 before get_globals 
+17:59:21.678 [MainThread] INFO    thonny: TIME/MODS 0.001 befsubcode 
+17:59:21.701 [MainThread] INFO    thonny: TIME/MODS 0.023 affsubcode 
+17:59:21.799 [MainThread] INFO    thonny: TIME/MODS 0.098 affforw 
+17:59:21.799 [MainThread] INFO    thonny: TIME/MODS 0.000 after get_globals 
+17:59:21.799 [MainThread] INFO    thonny: TIME/MODS 0.000 before Run 
+17:59:21.877 [MainThread] INFO    thonny: TIME/MODS 0.078 befsubcode 
+17:59:22.119 [MainThread] INFO    thonny: TIME/MODS 0.242 affsubcode 
+17:59:58.597 [Thread-2 (_read_incoming_messages)] INFO    thonny.plugins.micropython.mp_back: Sending interrupt
+17:59:58.598 [Thread-2 (_read_incoming_messages)] INFO    thonny.plugins.micropython.mp_back: Done sending interrupt
+17:59:58.635 [MainThread] INFO    thonny: TIME/MODS 36.516 affforw 
+17:59:58.635 [MainThread] INFO    thonny: TIME/MODS 0.000 bef preparing helpers 
+17:59:58.635 [MainThread] INFO    thonny.plugins.micropython.mp_back: Preparing helpers
+17:59:58.635 [MainThread] INFO    thonny: TIME/MODS 0.000 befsubcode 
+17:59:58.769 [MainThread] INFO    thonny: TIME/MODS 0.134 affsubcode 
+17:59:58.792 [MainThread] INFO    thonny: TIME/MODS 0.023 affforw 
+17:59:58.792 [MainThread] INFO    thonny: TIME/MODS 0.000 prepared helpers 
+17:59:58.792 [MainThread] INFO    thonny: TIME/MODS 0.000 befsubcode 
+17:59:58.808 [MainThread] INFO    thonny: TIME/MODS 0.016 affsubcode 
+17:59:58.824 [MainThread] INFO    thonny: TIME/MODS 0.016 affforw 
+17:59:58.824 [MainThread] INFO    thonny: TIME/MODS 0.000 got cwd 
+17:59:58.824 [MainThread] INFO    thonny: TIME/MODS 0.000 befsubcode 
+17:59:58.838 [MainThread] INFO    thonny: TIME/MODS 0.014 affsubcode 
+17:59:58.856 [MainThread] INFO    thonny: TIME/MODS 0.018 affforw 
+17:59:58.856 [MainThread] INFO    thonny: TIME/MODS 0.000 prepared 
+17:59:58.856 [MainThread] INFO    thonny.plugins.micropython.mp_back: Prepared
+17:59:58.856 [MainThread] INFO    thonny: TIME/MODS 0.000 after Run 
+17:59:58.865 [MainThread] INFO    thonny: TIME/MODS 0.009 before get_globals 
+17:59:58.866 [MainThread] INFO    thonny: TIME/MODS 0.001 befsubcode 
+17:59:58.888 [MainThread] INFO    thonny: TIME/MODS 0.023 affsubcode 
+17:59:58.981 [MainThread] INFO    thonny: TIME/MODS 0.093 affforw 
+17:59:58.981 [MainThread] INFO    thonny: TIME/MODS 0.000 after get_globals 
+17:59:58.981 [MainThread] INFO    thonny: TIME/MODS 0.000 before Run 
+17:59:59.059 [MainThread] INFO    thonny: TIME/MODS 0.078 befsubcode 
+17:59:59.297 [MainThread] INFO    thonny: TIME/MODS 0.238 affsubcode 
+18:00:40.092 [Thread-2 (_read_incoming_messages)] INFO    thonny.plugins.micropython.mp_back: Sending interrupt
+18:00:40.093 [Thread-2 (_read_incoming_messages)] INFO    thonny.plugins.micropython.mp_back: Done sending interrupt
+18:00:40.131 [MainThread] INFO    thonny: TIME/MODS 40.834 affforw 
+18:00:40.131 [MainThread] INFO    thonny: TIME/MODS 0.000 bef preparing helpers 
+18:00:40.131 [MainThread] INFO    thonny.plugins.micropython.mp_back: Preparing helpers
+18:00:40.131 [MainThread] INFO    thonny: TIME/MODS 0.000 befsubcode 
+18:00:40.267 [MainThread] INFO    thonny: TIME/MODS 0.136 affsubcode 
+18:00:40.288 [MainThread] INFO    thonny: TIME/MODS 0.021 affforw 
+18:00:40.288 [MainThread] INFO    thonny: TIME/MODS 0.000 prepared helpers 
+18:00:40.288 [MainThread] INFO    thonny: TIME/MODS 0.000 befsubcode 
+18:00:40.306 [MainThread] INFO    thonny: TIME/MODS 0.018 affsubcode 
+18:00:40.334 [MainThread] INFO    thonny: TIME/MODS 0.029 affforw 
+18:00:40.334 [MainThread] INFO    thonny: TIME/MODS 0.000 got cwd 
+18:00:40.334 [MainThread] INFO    thonny: TIME/MODS 0.000 befsubcode 
+18:00:40.355 [MainThread] INFO    thonny: TIME/MODS 0.021 affsubcode 
+18:00:40.382 [MainThread] INFO    thonny: TIME/MODS 0.027 affforw 
+18:00:40.382 [MainThread] INFO    thonny: TIME/MODS 0.000 prepared 
+18:00:40.382 [MainThread] INFO    thonny.plugins.micropython.mp_back: Prepared
+18:00:40.382 [MainThread] INFO    thonny: TIME/MODS 0.000 after Run 
+18:00:40.402 [MainThread] INFO    thonny: TIME/MODS 0.020 before get_globals 
+18:00:40.402 [MainThread] INFO    thonny: TIME/MODS 0.000 befsubcode 
+18:00:40.426 [MainThread] INFO    thonny: TIME/MODS 0.024 affsubcode 
+18:00:40.509 [MainThread] INFO    thonny: TIME/MODS 0.083 affforw 
+18:00:40.509 [MainThread] INFO    thonny: TIME/MODS 0.000 after get_globals 
+18:00:40.509 [MainThread] INFO    thonny: TIME/MODS 0.000 before Run 
+18:00:40.573 [MainThread] INFO    thonny: TIME/MODS 0.064 befsubcode 
+18:00:40.806 [MainThread] INFO    thonny: TIME/MODS 0.232 affsubcode 
+18:01:45.864 [Thread-2 (_read_incoming_messages)] INFO    thonny.plugins.micropython.mp_back: Sending interrupt
+18:01:45.864 [Thread-2 (_read_incoming_messages)] INFO    thonny.plugins.micropython.mp_back: Done sending interrupt
+18:01:45.895 [MainThread] INFO    thonny: TIME/MODS 65.090 affforw 
+18:01:45.895 [MainThread] INFO    thonny: TIME/MODS 0.000 bef preparing helpers 
+18:01:45.895 [MainThread] INFO    thonny.plugins.micropython.mp_back: Preparing helpers
+18:01:45.895 [MainThread] INFO    thonny: TIME/MODS 0.000 befsubcode 
+18:01:46.042 [MainThread] INFO    thonny: TIME/MODS 0.147 affsubcode 
+18:01:46.066 [MainThread] INFO    thonny: TIME/MODS 0.024 affforw 
+18:01:46.066 [MainThread] INFO    thonny: TIME/MODS 0.000 prepared helpers 
+18:01:46.066 [MainThread] INFO    thonny: TIME/MODS 0.000 befsubcode 
+18:01:46.082 [MainThread] INFO    thonny: TIME/MODS 0.016 affsubcode 
+18:01:46.112 [MainThread] INFO    thonny: TIME/MODS 0.030 affforw 
+18:01:46.112 [MainThread] INFO    thonny: TIME/MODS 0.000 got cwd 
+18:01:46.112 [MainThread] INFO    thonny: TIME/MODS 0.000 befsubcode 
+18:01:46.132 [MainThread] INFO    thonny: TIME/MODS 0.020 affsubcode 
+18:01:46.158 [MainThread] INFO    thonny: TIME/MODS 0.026 affforw 
+18:01:46.158 [MainThread] INFO    thonny: TIME/MODS 0.000 prepared 
+18:01:46.158 [MainThread] INFO    thonny.plugins.micropython.mp_back: Prepared
+18:01:46.158 [MainThread] INFO    thonny: TIME/MODS 0.000 after Run 
+18:01:46.200 [MainThread] INFO    thonny: TIME/MODS 0.041 before get_globals 
+18:01:46.200 [MainThread] INFO    thonny: TIME/MODS 0.001 befsubcode 
+18:01:46.224 [MainThread] INFO    thonny: TIME/MODS 0.024 affsubcode 
+18:01:46.316 [MainThread] INFO    thonny: TIME/MODS 0.092 affforw 
+18:01:46.316 [MainThread] INFO    thonny: TIME/MODS 0.000 after get_globals 
+18:01:52.137 [MainThread] INFO    thonny.plugins.micropython.connection: Detected connection error
+18:01:52.137 [MainThread] INFO    thonny.backend: Handling connection error
