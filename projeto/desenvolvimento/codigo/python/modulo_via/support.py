@@ -25,7 +25,6 @@ class MyDht:
             return (255, 255)
             
 
-
 if __name__ == '__main__':
     my_dht = MyDht(pin=33)
     while True:
