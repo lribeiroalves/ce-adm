@@ -53,7 +53,7 @@ class MyDht:
             e atualiza a lista de retorno """
         current_time = ticks_ms()
         
-        if current_time >= self.__previous_time + self.__read_time and self.__update_enable == True:
+        if current_time >= self.__previous_time + self.__read_time and self.__update_enable:
             self.__previous_time = current_time
             # Realiza a leitura a salva na lista de retorno, desabilita novas leituras
             r = self.read_dht()
