@@ -22,6 +22,7 @@ class MyDht:
             return (self.__dht.temperature() * 5, self.__dht.humidity())
         except Exception as err:
             print(err)
+            return (255, 255)
             
 
 
