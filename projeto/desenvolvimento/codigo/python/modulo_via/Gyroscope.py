@@ -15,6 +15,7 @@ class Gyroscope:
         self.__previous_time = 0
         self.__readings = [0,0,0]
         self.__update_enable = True
+        self.__count_readings = 0
         
         # acordar o sensor MPU 5060
         self.__i2c.writeto_mem(MPU, PWR_MNGM, bytes([0x00]))
@@ -51,8 +52,18 @@ class Gyroscope:
     
     def update(self):
         """ Consulta os valores do giroscópio em períodos definidos """
-        pass
-
+        current_time = ticks_ms()
+        
+        if current_time >= self.__previous_time + self.__read_time and self.__update_enable:
+            self.__previous_time = current_time
+            # realiza a leitura 10 vezes e calcula retorna a média
+            if self.__count_readings < 10:
+                # faz 1 leitura e armazena ----------------------------------
+                self.__count_readings += 1
+            else:
+                # calcula a média e retorna ---------------------------------
+                self.__count_readings = 0
+                self.__update_enable = False
 
 if __name__ == '__main__':
     gyro = Gyroscope()
