@@ -17,9 +17,12 @@ class MyDht:
     
     def read_dht(self) -> tuple[int, int]:
         """ Realiza apenas uma leitura e retorna uma tupla (temperatura * 5, umidade) """
-        self.__dht.measure()
-        
-        return (self.__dht.temperature() * 5, self.__dht.humidity())
+        try:
+            self.__dht.measure()
+            return (self.__dht.temperature() * 5, self.__dht.humidity())
+        except Exception as err:
+            print(err)
+            
 
 
 if __name__ == '__main__':
