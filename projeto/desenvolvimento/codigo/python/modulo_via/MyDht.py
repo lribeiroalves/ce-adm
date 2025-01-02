@@ -6,8 +6,9 @@ from time import sleep, sleep_ms, ticks_ms
 class MyDht:
     """ Classe para implementação específica do uso do modulo dht
     para leituras de umidade e temperatura em períodos predefinidos"""
-    def __init__(self, pin, time_ms=1000):
-        self.__dht_object = DHT.DHT11(Pin(pin))
+    
+    def __init__(self, dht_pin: int = 33, time_ms: int = 1000):
+        self.__dht_object = DHT.DHT11(Pin(dht_pin))
         self.__read_time = time_ms
         self.__previous_time = 0
         self.__readings = [0, 0]
@@ -62,7 +63,7 @@ class MyDht:
 
 if __name__ == '__main__':
     # Exemplo de aplicação da classe MyDht
-    dht = MyDht(pin=33)
+    dht = MyDht(dht_pin=33)
     while True:
         dht.update()
         if not dht.update_enable:

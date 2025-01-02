@@ -27,4 +27,4 @@ while True:
     
     print(x, y, z)
     
-    sleep(0.1)
+    sleep(1)
