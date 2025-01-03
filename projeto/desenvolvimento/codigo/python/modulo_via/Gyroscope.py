@@ -1,9 +1,13 @@
 from machine import Pin, SoftI2C
 from time import sleep, sleep_ms, ticks_ms
 
+# SENSOR ADRRESSES
 MPU = 0x68
 PWR_MNGM = 0x6B
 GYRO_ADDR = 0x43
+
+# NÚMERO DE LEITURAS QUE SERÃO FEITAS POR AMOSTRA
+N_LEITURAS = 10
 
 class Gyroscope:
     """ Classe que implementa as funções de leitura do giroscopio
@@ -20,6 +24,25 @@ class Gyroscope:
         # acordar o sensor MPU 5060
         self.__i2c.writeto_mem(MPU, PWR_MNGM, bytes([0x00]))
         sleep_ms(5)
+    
+    
+    @property
+    def readings(self):
+        return self.__readings
+    
+    
+    @property
+    def update_enable(self):
+        return self.__update_enable
+    
+    
+    @update_enable.setter
+    def update_enable(self, flag: bool):
+        if flag == True:
+            self.__update_enable = True
+            self.__readings = [0, 0, 0]
+        else:
+            raise ValueError('Esse atributo só pode ser alterado para verdadeiro.')
     
     
     def __make_signed(self, num: int) -> int:
@@ -57,17 +80,24 @@ class Gyroscope:
         if current_time >= self.__previous_time + self.__read_time and self.__update_enable:
             self.__previous_time = current_time
             # realiza a leitura 10 vezes e calcula retorna a média
-            if self.__count_readings < 10:
-                # faz 1 leitura e armazena ----------------------------------
+            if self.__count_readings < N_LEITURAS:
+                # faz 1 leitura e armazena
+                r = self.read_gyro()
+                for i, v in enumerate(r):
+                    self.__readings[i] = max(self.__readings[i], v)
                 self.__count_readings += 1
             else:
-                # calcula a média e retorna ---------------------------------
+                # calcula a média e retorna
                 self.__count_readings = 0
                 self.__update_enable = False
 
+
 if __name__ == '__main__':
+    # Exemplo de aplicação da classe Giroscope
     gyro = Gyroscope()
-    
     while True:
-        print(gyro.read_gyro())
-        sleep(1)
+        gyro.update()
+        if not gyro.update_enable:
+            print(gyro.readings)
+            gyro.update_enable = True
+        
