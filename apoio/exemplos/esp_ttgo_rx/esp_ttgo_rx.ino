@@ -4,8 +4,8 @@
 *********/
 
 //Libraries for LoRa
-#include <SPI.h>
-#include <LoRa.h>
+// #include <SPI.h>
+// #include <LoRa.h>
 
 //Libraries for OLED Display
 #include <Wire.h>
@@ -64,14 +64,14 @@ void setup() {
   Serial.println("LoRa Receiver Test");
   
   //SPI LoRa pins
-  SPI.begin(SCK, MISO, MOSI, SS);
+  // SPI.begin(SCK, MISO, MOSI, SS);
   //setup LoRa transceiver module
-  LoRa.setPins(SS, RST, DIO0);
+  // LoRa.setPins(SS, RST, DIO0);
 
-  if (!LoRa.begin(BAND)) {
-    Serial.println("Starting LoRa failed!");
-    while (1);
-  }
+  // if (!LoRa.begin(BAND)) {
+  //   Serial.println("Starting LoRa failed!");
+  //   while (1);
+  // }
   Serial.println("LoRa Initializing OK!");
   display.setCursor(0,10);
   display.println("LoRa Initializing OK!");
@@ -81,21 +81,21 @@ void setup() {
 void loop() {
 
   //try to parse packet
-  int packetSize = LoRa.parsePacket();
-  if (packetSize) {
-    //received a packet
-    Serial.print("Received packet ");
+  // int packetSize = LoRa.parsePacket();
+  // if (packetSize) {
+  //   //received a packet
+  //   Serial.print("Received packet ");
 
-    //read packet
-    while (LoRa.available()) {
-      LoRaData = LoRa.readString();
-      Serial.print(LoRaData);
-    }
+  //   //read packet
+  //   while (LoRa.available()) {
+  //     LoRaData = LoRa.readString();
+  //     Serial.print(LoRaData);
+  //   }
 
-    //print RSSI of packet
-    int rssi = LoRa.packetRssi();
-    Serial.print(" with RSSI ");
-    Serial.println(rssi);
+  //   //print RSSI of packet
+  //   int rssi = LoRa.packetRssi();
+  //   Serial.print(" with RSSI ");
+  //   Serial.println(rssi);
 
    // Dsiplay information
    display.clearDisplay();
@@ -104,11 +104,11 @@ void loop() {
    display.setCursor(0,20);
    display.print("Received packet:");
    display.setCursor(0,30);
-   display.print(LoRaData);
+  //  display.print(LoRaData);
    display.setCursor(0,40);
    display.print("RSSI:");
    display.setCursor(30,40);
-   display.print(rssi);
+  //  display.print(rssi);
    display.display();   
-  }
+  // }
 }
