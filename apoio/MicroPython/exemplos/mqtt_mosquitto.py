@@ -3,6 +3,12 @@ import network
 from time import sleep
 from machine import Pin, ADC
 
+# É necessário abrir a porta 1883 no Firewall da máquina para estabelecer a conexão
+# Para isso, basta inserir o seguinte comando no prompt com direitos de administrador
+# netsh advfirewall firewall add rule name="Mosquitto" dir=in action=allow protocol=TCP localport=1883
+
+
+
 # Função para conectar ao WiFi
 def conectar_wifi(ssid, senha):
     wlan = network.WLAN(network.STA_IF)
