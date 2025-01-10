@@ -1,3 +1,5 @@
 */.spyproject
 *.pyc
 *.ini
+/.venv
+.pycache
