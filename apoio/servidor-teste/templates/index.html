@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MQTT Messages</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
+    <script type="text/javascript" charset="utf-8">
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+        var subscribedTopics = [];
+
+        socket.on('mqtt_message', function(data) {
+            var message = 'Topic: ' + data.topic + ' | Message: ' + data.message;
+            var p = document.createElement('p');
+            p.textContent = message;
+            document.getElementById('messages').appendChild(p);
+        });
+
+        function updateSubscribedTopics() {
+            var topicsDiv = document.getElementById('subscribed-topics');
+            topicsDiv.innerHTML = ''
+            subscribedTopics.forEach(topic => {
+                var p = document.createElement('p');
+                p.textContent = 'Subscribed to topic: ' + topic;
+                topicsDiv.appendChild(p);
+            });
+        }
+
+        function subscribe() {
+            var topic = document.getElementById('topic').value;
+            fetch('/subscribe', {
+                method:'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({topic: topic})
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message)
+                subscribedTopics.push(topic);
+                updateSubscribedTopics()
+            });
+        }
+
+        function unsubscribe() {
+            var topic = document.getElementById('topic').value;
+            fetch('/unsubscribe', {
+                method:'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({topic: topic})
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(JSON.stringify(data));
+                subscribedTopics = subscribedTopics.filter(t => t !== topic);
+                updateSubscribedTopics()
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>MQTT Messages</h1>
+    <input type="text" name="topic" id="topic" placeholder="Enter topic to subscribe">
+    <button onclick="subscribe()">Subscribe</button>
+    <button onclick="unsubscribe()">Unsubscribe</button>
+    <div id="subscribed-topics"></div>
+    <div id="messages"></div>
+</body>
+</html>
