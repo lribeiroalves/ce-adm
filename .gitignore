@@ -5,6 +5,7 @@
 .pycache
 
 .venv/
+.virtualenv/
 
 *.pyc
 __pycache__/

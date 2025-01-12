@@ -2,9 +2,20 @@ from umqtt.simple import MQTTClient
 import network
 from time import sleep
 import ujson
+from machine import Pin, ADC
+
+# Configurar ADC
+adc = ADC(Pin(34))
+adc.atten(ADC.ATTN_11DB)
+adc.width(ADC.WIDTH_12BIT)
+
+# Configurar LED
+led = Pin(23, Pin.OUT)
+led.value(0)
 
 # Endereço do broker MQTT
 BROKER_ADRR = '192.168.0.10'
+TOPIC = 'test/server/read'
 
 
 # Conectar o WiFi
@@ -26,16 +37,9 @@ def conectar_wifi(ssid: str, password: str):
             break
 
 
-# Tratar mensagens recebidas por MQTT
-def tratar_msg(topic, msg):
-    print(f'Tópico: {topic}, Mensagem: {msg}')
-    print(f'Tópico: {topic.decode("utf-8")}, Mensagem: {msg.decode("utf-8")}')
-
-
 # Conectar broker MQTT e assinar a um topico
-def conectar_mqtt(broker_addr, sub_topic):
+def conectar_mqtt(broker_addr):
     client = MQTTClient('esp32', broker_addr)
-    client.set_callback(tratar_msg)
     try:
         client.connect()
         print('Conectado ao Broker MQTT')
@@ -43,29 +47,31 @@ def conectar_mqtt(broker_addr, sub_topic):
         print(f'Erro ao conectar ao Broker MQTT: {e}')
         while True:
             pass
-#     try:
-#         client.subscribe(sub_topic)
-#         print(f'Assinado ao tópico: {sub_topic}')
-#     except OSError as e:
-#         print(f'Erro ao assinar o tópico {sub_topic}: {e}')
-#         while True:
-#             pass
-    
     return client
 
 
 if __name__ == '__main__':
     conectar_wifi('2GNETVIRTUA_AP1811', '194267140')
-    client = conectar_mqtt(BROKER_ADRR, 'test/server/read')
+    client = conectar_mqtt(BROKER_ADRR)
     
-    msg = {'pacote': 1, 'name': 'esp32', 'led': True, 'adc': 255}
-    msg = ujson.dumps(msg)
-    
+    counter = 0
+    c = 0
     while True:
-        client.publish('test/server/read', msg)
-        sleep(2)
+        led.value(not led.value())
+        pacote = {
+            'pacote': counter,
+            'name': 'esp32',
+            'led': led.value(),
+            'adc': adc.read()
+        }
+        counter+=1
+        c+=1
+        msg = ujson.dumps(pacote)
+        client.publish(TOPIC, msg)
+        print(pacote)
+        if c >= 50:
+            c = 0
+            sleep(10)
+        else:
+            sleep(0.1)
     
-#     print('Aguardando mensagens...')
-#     while True:
-#         client.check_msg()
-#         sleep(0.5)
