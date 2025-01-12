@@ -1,0 +1,20 @@
+[default]
+TITLE = "ADM Server"
+SECRET_KEY = "24992a60806afb5a0ff52331347a9e126fef45ed43f66d8d2ec5818d6cf4736d"
+EXTENSIONS = [
+    'adm_server.ext.socket_io:init_app',
+    'adm_server.ext.mqtt:init_app',
+    'adm_server.ext.database:init_app',
+    'adm_server.ext.cli:init_app',
+    'adm_server.blueprints.webui:init_app',
+
+    # 'adm_server.ext.database.migration:init_app',
+    # 'adm_server.ext.authentication:init_app',
+    # 'adm_server.ext.admin:init_app',
+]
+# FLASK_ADMIN_SWATCH = 'sandstone'
+
+
+[development]
+DEBUG = false
+SQLALCHEMY_DATABASE_URI = "sqlite:///database.db"
