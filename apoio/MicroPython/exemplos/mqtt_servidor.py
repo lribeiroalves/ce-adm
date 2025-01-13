@@ -13,9 +13,16 @@ adc.width(ADC.WIDTH_12BIT)
 led = Pin(23, Pin.OUT)
 led.value(0)
 
+# Dados da Rede WiFi
+SSID = 'Galaxy S22EAA7'
+WIFI_PASS = 'tbtt6469'
+
 # Endereço do broker MQTT
-BROKER_ADRR = '192.168.0.10'
+BROKER_ADRR = '192.168.154.161'
+BROKER_PORT = 1883
 TOPIC = 'test/server/read'
+MQTT_USER = 'esp32'
+MQTT_PASS = 'esp32'
 
 
 # Conectar o WiFi
@@ -38,8 +45,8 @@ def conectar_wifi(ssid: str, password: str):
 
 
 # Conectar broker MQTT e assinar a um topico
-def conectar_mqtt(broker_addr):
-    client = MQTTClient('esp32', broker_addr)
+def conectar_mqtt(broker_addr, broker_port, mqtt_user, mqtt_passwd):
+    client = MQTTClient('esp32', broker_addr, broker_port, mqtt_user, mqtt_passwd)
     try:
         client.connect()
         print('Conectado ao Broker MQTT')
@@ -51,8 +58,8 @@ def conectar_mqtt(broker_addr):
 
 
 if __name__ == '__main__':
-    conectar_wifi('2GNETVIRTUA_AP1811', '194267140')
-    client = conectar_mqtt(BROKER_ADRR)
+    conectar_wifi(SSID, WIFI_PASS)
+    client = conectar_mqtt(BROKER_ADRR, BROKER_PORT, MQTT_USER, MQTT_PASS)
     
     counter = 0
     c = 0

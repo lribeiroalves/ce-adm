@@ -14,7 +14,15 @@ from adm_server.ext.database.models import Readings
 
 
 broker_address = 'localhost'
+broker_port = 1883
+mqtt_user = 'flask'
+mqtt_passwd = 'flask'
+mqtt_topics = [
+    'test/server/hello',
+    'test/server/read',
+    ]
 client_mqtt = mqtt.Client()
+client_mqtt.username_pw_set(mqtt_user, mqtt_passwd)
 
 
 # Avalia se a string é um json válido
@@ -65,8 +73,7 @@ def init_app(app):
     try:
         client_mqtt.on_message = lambda client, userdata, message: on_message(app, client, userdata, message) # Associa a função de callback para mensagens
         client_mqtt.connect(broker_address)
-        topics = ['test/server/hello', 'test/server/read']
-        for t in topics:
+        for t in mqtt_topics:
             client_mqtt.subscribe(t)
 
         signal.signal(signal.SIGINT, signal_handler) # Captura o comando Ctrl+c (SIGINT) e chama a função signal handler
