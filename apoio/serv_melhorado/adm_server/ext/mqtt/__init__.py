@@ -1,4 +1,4 @@
-""" MQTT Clieent Factory """
+""" MQTT Client Factory """
 
 import paho.mqtt.client as mqtt
 from flask_socketio import emit
@@ -20,6 +20,7 @@ mqtt_passwd = 'flask'
 mqtt_topics = [
     'test/server/hello',
     'test/server/read',
+    'adm/esp_sensor/server',
     ]
 client_mqtt = mqtt.Client()
 client_mqtt.username_pw_set(mqtt_user, mqtt_passwd)
@@ -55,6 +56,16 @@ def on_message(app, client, userdata, message):
                     db.session.commit()
             else:
                 print('Not a Valid JSON Object')
+        
+        case 'adm/esp_sensor/server':
+            if is_valid_json(msg):
+                print(msg)
+                # Implementar registro no banco de dados -----------------------------------------------------
+            else:
+                print('Not a valid JSON')
+
+        case _:
+            pass
             
 
 # Função quee será executada para sempre em outro thread 
