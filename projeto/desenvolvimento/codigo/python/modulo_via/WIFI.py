@@ -11,9 +11,9 @@ class WIFI:
         
     """
     
-    def __init__(self, ssid: str, passwd: str, on_fail_conn: bool = False):
+    def __init__(self, ssid: str, pswd: str, on_fail_conn: bool = False):
         self.__ssid = ssid
-        self.__passwd = passwd
+        self.__passwd = pswd
         self.__on_fail_conn = on_fail_conn
         self.__wifi = network.WLAN(network.STA_IF)
     
