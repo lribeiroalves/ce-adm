@@ -19,7 +19,7 @@ class Readings(db.Model):
         return f'Readings(id = {self.id}, pacote = {self.pacote}, name = {self.name}, led = {"Aceso" if self.led else "Apagado"}, adc = {self.adc}, date = {self.date})'
 
 
-class EspSensor:
+class EspSensor(db.Model):
     id:Mapped[int] = mapped_column(primary_key=True)
     addr:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
     msg_type:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)

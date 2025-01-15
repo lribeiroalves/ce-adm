@@ -1,7 +1,7 @@
 """ CLI Commands Factory """
 
 from adm_server.ext.database import db
-from adm_server.ext.database.models import Readings
+from adm_server.ext.database.models import Readings, EspSensor
 from adm_server.ext.mqtt import client_mqtt
 
 from flask.cli import with_appcontext

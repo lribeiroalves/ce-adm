@@ -22,17 +22,25 @@ PIN_LORA_TX =  27
 ESP_ADDR = 0x01 # Sensor em Teste -> 0x01, sensor de controle -> 0x02, esp da sala técnica -> 0x03
 MSG_TYPE = {'leitura': 0x10, 'clock_get': 0x20, 'clock_set': 0x30}
 
+# Endereços de Rede e Broker MQTT
+WIFI_SSID = 'SCA_Instrumentos'
+WIFI_PSWD = 'SCAOnline'
+BROKER_ADRR = '192.168.0.107'
+BROKER_PORT = 1883
+MQTT_USER = 'esp32'
+MQTT_PSWD = 'esp32'
+
 # Criar instancias
-wifi = WIFI(ssid='ssid', pswd='pswd')
-mqtt_client = MQTT(addr='server_ip', user='esp32', pswd='esp32')
+wifi = WIFI(ssid=WIFI_SSID, pswd=WIFI_PSWD)
+mqtt_client = MQTT(addr=BROKER_ADRR, user=MQTT_USER, pswd=MQTT_PSWD, port=BROKER_PORT)
 dht = MyDht(PIN_DHT)
 gyro = Gyroscope(PIN_SCL, PIN_SDA)
 clock = Clock()
 sd = CardSD(PIN_CS, PIN_SCK, PIN_MOSI, PIN_MISO)
-lora = UART(1, baudrate=1200, tx=PIN_LORA_TX, rx=PIN_LORA_RX)
+lora = UART(1, baudrate=4800, tx=PIN_LORA_TX, rx=PIN_LORA_RX)
 
 # Definição do horário inicial do RTC interno
-clock.set_time(ano=25, mes=1, dia=3, hora=18, minuto=23, segundo=40)
+clock.set_time(ano=25, mes=1, dia=15, hora=0, minuto=0, segundo=0)
 
 # Criação do arquivo data_logger.txt que armazenará as informações de leituras
 dte = clock.get_time()
@@ -54,7 +62,7 @@ def criar_pacote() -> dict[str:dict[str:bytes], str:str, str:list[bytes]]:
     }
     # mensagem pronta para o datalog
     csv = f"{raw['day']},{raw['month']},{raw['year']},{raw['hour']},{raw['minute']},{raw['second']},{raw['umid']},{raw['temp']},{raw['gX']},{raw['gY']},{raw['gZ']}\n"
-    
+    # mensagem pronta para transmissão LoRa
     lora_msg = [raw['addr'], raw['msg_type'], raw['day'], raw['month'], raw['year'], raw['hour'], raw['minute'], raw['second'], raw['umid'], raw['temp'], raw['gX'], raw['gY'], raw['gZ']]
     
     return {'raw': raw, 'csv': csv, 'lora_msg':lora_msg}

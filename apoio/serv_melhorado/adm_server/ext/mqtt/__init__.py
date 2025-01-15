@@ -10,7 +10,7 @@ import datetime
 
 from adm_server.ext.socket_io import socketio
 from adm_server.ext.database import db
-from adm_server.ext.database.models import Readings
+from adm_server.ext.database.models import Readings, EspSensor
 
 
 broker_address = 'localhost'
@@ -59,8 +59,31 @@ def on_message(app, client, userdata, message):
         
         case 'adm/esp_sensor/server':
             if is_valid_json(msg):
-                print(msg)
-                # Implementar registro no banco de dados -----------------------------------------------------
+                msg = json.loads(msg)
+                chaves_esperadas = ['addr', 'msg_type', 'temp', 'umid', 'gX', 'gY', 'gZ', 'year', 'month', 'day', 'hour', 'minute', 'second']
+                if set(chaves_esperadas) == set(msg.keys()):
+                    with app.app_context():
+                        new_data = EspSensor()
+
+                        new_data.addr = msg['addr']
+                        new_data.msg_type = msg['msg_type']
+                        new_data.temp = msg['temp']
+                        new_data.umid = msg['umid']
+                        new_data.gX = msg['gX']
+                        new_data.gY = msg['gY']
+                        new_data.gZ = msg['gZ']
+                        new_data.year = msg['year']
+                        new_data.month = msg['month']
+                        new_data.day = msg['day']
+                        new_data.hour = msg['hour']
+                        new_data.minute = msg['minute']
+                        new_data.second = msg['second']
+                        new_data.date = datetime.datetime.now()
+                        
+                        db.session.add(new_data)
+                        db.session.commit()
+                else:
+                    print('A Mensagem recebida não está no padrão esperado.')
             else:
                 print('Not a valid JSON')
 
