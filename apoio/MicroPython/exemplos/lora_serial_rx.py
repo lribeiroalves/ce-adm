@@ -2,7 +2,7 @@ from machine import UART
 from time import sleep, sleep_ms
 
 # lora1 = UART(1, baudrate=1200, tx=4, rx=2)
-lora2 = UART(2, baudrate=4800, tx=17, rx=16)
+lora2 = UART(2, baudrate=4800, tx=22, rx=23)
 
 print('LORA RX')
 sleep(3)

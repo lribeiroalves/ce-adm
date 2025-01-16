@@ -7,6 +7,7 @@ EXTENSIONS = [
     'adm_server.ext.database:init_app',
     'adm_server.ext.cli:init_app',
     'adm_server.blueprints.webui:init_app',
+    'adm_server.blueprints.restapi:init_app',
 
     # 'adm_server.ext.database.migration:init_app',
     # 'adm_server.ext.authentication:init_app',

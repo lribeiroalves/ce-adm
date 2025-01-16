@@ -38,3 +38,22 @@ class EspSensor(db.Model):
 
     def __repr__(self):
         return f'EspSensor(id = {self.id}, addr = {self.addr}, type = {self.msg_type})'
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'addr': self.addr,
+            'msg_type': self.msg_type,
+            'temp': self.temp,
+            'umid': self.umid,
+            'gX': self.gX,
+            'gY': self.gY,
+            'gZ': self.gZ,
+            'year': self.year,
+            'month': self.month,
+            'day': self.day,
+            'hour': self.hour,
+            'minute': self.minute,
+            'second': self.second,
+            'date': self.date,
+        }
