@@ -28,6 +28,8 @@ class EspSensor(db.Model):
     gX:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
     gY:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
     gZ:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
+    adc_int:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
+    adc_dec:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
     year:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
     month:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
     day:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
