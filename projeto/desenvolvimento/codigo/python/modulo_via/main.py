@@ -1,5 +1,4 @@
 from machine import UART
-import ujson
 
 from WIFI import WIFI
 from MQTT import MQTT
@@ -27,8 +26,12 @@ MSG_TYPE = {'leitura': 0x10, 'clock_get': 0x20, 'clock_set': 0x30}
 
 # Endereços de Rede e Broker MQTT
 WIFI_SSID = 'SCA_Instrumentos'
+WIFI_SSID = 'Galaxy S22EAA7'
+WIFI_SSID = '2GNETVIRTUA_AP1811'
 WIFI_PSWD = 'SCAOnline'
-BROKER_ADRR = '192.168.0.107'
+WIFI_PSWD = 'tbtt6469'
+WIFI_PSWD = '194267140'
+BROKER_ADRR = '192.168.0.10'
 BROKER_PORT = 1883
 MQTT_USER = 'esp32'
 MQTT_PSWD = 'esp32'
@@ -59,16 +62,16 @@ def criar_pacote() -> dict[str:dict[str:bytes], str:str, str:list[bytes]]:
     raw = {
         'addr': ESP_ADDR,
         'msg_type': MSG_TYPE['leitura'],
-        'adc_inteiro': adc.readings[0], 'adc_decimal': adc.readings[1],
+        'adc_int': adc.readings[0], 'adc_dec': adc.readings[1],
         'temp': dht.readings[0], 'umid': dht.readings[1],
         'gX': gyro.readings[0], 'gY': gyro.readings[1], 'gZ': gyro.readings[2],
         'year': dte['ano'] - 2000, 'month': dte['mes'], 'day': dte['dia'],
         'hour': dte['hora'], 'minute': dte['minuto'], 'second': dte['segundo']
     }
     # mensagem pronta para o datalog
-    csv = f"{raw['day']},{raw['month']},{raw['year']},{raw['hour']},{raw['minute']},{raw['second']},{raw['umid']},{raw['temp']},{raw['gX']},{raw['gY']},{raw['gZ']},{raw['adc_inteiro']},{raw['adc_decimal']}\n"
+    csv = f"{raw['day']},{raw['month']},{raw['year']},{raw['hour']},{raw['minute']},{raw['second']},{raw['umid']},{raw['temp']},{raw['gX']},{raw['gY']},{raw['gZ']},{raw['adc_int']},{raw['adc_dec']}\n"
     # mensagem pronta para transmissão LoRa
-    lora_msg = [raw['addr'], raw['msg_type'], raw['day'], raw['month'], raw['year'], raw['hour'], raw['minute'], raw['second'], raw['umid'], raw['temp'], raw['gX'], raw['gY'], raw['gZ'], raw['adc_inteiro'], raw['adc_decimal']]
+    lora_msg = [raw['addr'], raw['msg_type'], raw['day'], raw['month'], raw['year'], raw['hour'], raw['minute'], raw['second'], raw['umid'], raw['temp'], raw['gX'], raw['gY'], raw['gZ'], raw['adc_int'], raw['adc_dec']]
     
     return {'raw': raw, 'csv': csv, 'lora_msg':lora_msg}
 
@@ -104,7 +107,7 @@ while True:
         # Enviar os dados via LoRa
         lora.write(bytes(pacote['lora_msg']))
         # Enviar os dados via MQTT
-        mqtt_client.publicar_mensagem(topico_pub, ujson.dumps(pacote['raw']))
+        mqtt_client.publicar_mensagem(topico_pub, pacote['raw'])
         # Habilitar novas leituras dos sensores
         dht.update_enable = True
         gyro.update_enable = True

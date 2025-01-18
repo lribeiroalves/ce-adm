@@ -60,9 +60,7 @@ def on_message(app, client, userdata, message):
         case 'adm/esp_sensor/server':
             if is_valid_json(msg):
                 msg = json.loads(msg)
-                print(msg)
-                print(type(msg))
-                chaves_esperadas = ['addr', 'msg_type', 'temp', 'umid', 'gX', 'gY', 'gZ', 'year', 'month', 'day', 'hour', 'minute', 'second']
+                chaves_esperadas = ['addr', 'msg_type', 'temp', 'umid', 'gX', 'gY', 'gZ', 'adc_int', 'adc_dec', 'year', 'month', 'day', 'hour', 'minute', 'second']
                 if set(chaves_esperadas) == set(msg.keys()):
                     with app.app_context():
                         new_data = EspSensor()
