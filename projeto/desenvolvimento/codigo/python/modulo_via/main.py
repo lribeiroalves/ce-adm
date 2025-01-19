@@ -77,37 +77,32 @@ def criar_pacote() -> dict[str:dict[str:bytes], str:str, str:list[bytes]]:
 
 
 # Conexão com WiFi e MQTT
-wifi.conectar()
-mqtt_client.conectar()
-topico_pub = 'adm/esp_sensor/server'
-topico_sub = ['adm/server/esp_sensor']
-mqtt_client.assinar_topicos(topico_sub)
+# wifi.conectar()
+# mqtt_client.conectar()
+# topico_pub = 'adm/esp_sensor/server'
+# topico_sub = ['adm/server/esp_sensor']
+# mqtt_client.assinar_topicos(topico_sub)
 
 
 # Função de callback para mensagens recebidas via MQTT
 def callback(topic: bytes, msg: bytes):
     if topic.decode() == topico_sub[0]:
         print(topic.decode(), msg.decode())
-        
-        
 # mqtt_client.definir_cb(callback)
+
 
 # Leitura dos sensores e tratamento dos dados
 while True:
     dht.update()
     gyro.update()
     adc.update()
-    mqtt_client.chk_msg()
+#     mqtt_client.chk_msg() # Veirificar novas mensagens MQTT
     
-    if not dht.update_enable and not gyro.update_enable and not adc.update_enable:
-        # Criar o pacote com as informações
-        pacote = criar_pacote()
-        # Salvar no SD
-        sd.write_data(logger_path, pacote['csv'], 'a')
-        # Enviar os dados via LoRa
-        lora.write(bytes(pacote['lora_msg']))
-        # Enviar os dados via MQTT
-        mqtt_client.publicar_mensagem(topico_pub, pacote['raw'])
+    if [dht.update_enable, gyro.update_enable, adc.update_enable] == [0, 0, 0]:
+        pacote = criar_pacote() # Criar o pacote com as informações
+        sd.write_data(logger_path, pacote['csv'], 'a') # Salvar no SD
+        lora.write(bytes(pacote['lora_msg'])) # Enviar os dados via LoRa
+#         mqtt_client.publicar_mensagem(topico_pub, pacote['raw']) # Enviar os dados via MQTT
         # Habilitar novas leituras dos sensores
         dht.update_enable = True
         gyro.update_enable = True
