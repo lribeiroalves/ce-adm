@@ -25,11 +25,11 @@ ESP_ADDR = 0x01 # Sensor em Teste -> 0x01, sensor de controle -> 0x02, esp da sa
 MSG_TYPE = {'leitura': 0x10, 'clock_get': 0x20, 'clock_set': 0x30}
 
 # Endereços de Rede e Broker MQTT
-WIFI_SSID = 'SCA_Instrumentos'
-WIFI_SSID = 'Galaxy S22EAA7'
+# WIFI_SSID = 'SCA_Instrumentos'
+# WIFI_SSID = 'Galaxy S22EAA7'
 WIFI_SSID = '2GNETVIRTUA_AP1811'
-WIFI_PSWD = 'SCAOnline'
-WIFI_PSWD = 'tbtt6469'
+# WIFI_PSWD = 'SCAOnline'
+# WIFI_PSWD = 'tbtt6469'
 WIFI_PSWD = '194267140'
 BROKER_ADRR = '192.168.0.10'
 BROKER_PORT = 1883
