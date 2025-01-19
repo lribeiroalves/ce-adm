@@ -51,7 +51,7 @@ clock.set_time(ano=25, mes=1, dia=15, hora=0, minuto=0, segundo=0)
 
 # Criação do arquivo data_logger.txt que armazenará as informações de leituras
 dte = clock.get_time()
-logger_path = f'/sd/data_logger/{dte["ano"]}_{dte["mes"]}_{dte["dia"]}.csv'
+logger_path = f'/sd/data_logger/{dte["ano"]}_{dte["mes"]}_{dte["dia"]}_{dte["hora"]}_{dte["minuto"]}_{dte["segundo"]}.csv'
 sd.write_data(logger_path, 'day,month,year,hour,minute,second,umid,temp,gX,gY,gZ,adc_int,adc_dec\n', 'w')
 
 
