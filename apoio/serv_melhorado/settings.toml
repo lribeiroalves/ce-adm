@@ -19,4 +19,5 @@ EXTENSIONS = [
 [development]
 DEBUG = false
 SQLALCHEMY_DATABASE_URI = "mysql+mysqlconnector://root:adm_db@localhost/adm_db"
+# SQLALCHEMY_DATABASE_URI = "mysql+mysqlconnector://root:adm_db@192.168.0.9/adm_db"
 # SQLALCHEMY_DATABASE_URI = "sqlite:///database.db"
