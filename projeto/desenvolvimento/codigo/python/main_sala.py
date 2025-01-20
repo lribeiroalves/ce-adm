@@ -1,5 +1,6 @@
 from machine import UART
 from time import sleep_ms
+from CRC16.CRC16 import verificar_crc16
 
 from WIFI import WIFI
 from MQTT import MQTT
@@ -24,11 +25,13 @@ MSG_TYPE = {'leitura': 0x10, 'clock_get': 0x20, 'clock_set': 0x30}
 # Endereços de Rede e Broker MQTT
 # WIFI_SSID = 'SCA_Instrumentos'
 # WIFI_SSID = 'Galaxy S22EAA7'
-WIFI_SSID = '2GNETVIRTUA_AP1811'
+WIFI_SSID = 'ADM_SSV'
+# WIFI_SSID = '2GNETVIRTUA_AP1811'
 # WIFI_PSWD = 'SCAOnline'
 # WIFI_PSWD = 'tbtt6469'
-WIFI_PSWD = '194267140'
-BROKER_ADRR = '192.168.0.10'
+WIFI_PSWD = '244466666'
+# WIFI_PSWD = '194267140'
+BROKER_ADRR = '192.168.10.102'
 BROKER_PORT = 1883
 MQTT_USER = 'esp32'
 MQTT_PSWD = 'esp32'
@@ -47,14 +50,21 @@ def get_mqtt(topic, msg):
     pass
 
 
+TAMANHO_PACOTE = 15
 # Função para lidar com os pacotes recebidos via LoRa
 def get_lora(packet: List[bytes], rssi_on:bool = True):
     if rssi_on:
         lora_msg = packet[:-1]
-        rssi = packet[-1]
+        rssi = -(256-packet[-1])
     else:
         lora_msg = packet
         rssi = None
+    
+    # Verificação do checksum (CRC-16)
+    lora_msg = verificar_crc16(lora_msg)
+    if lora_msg:
+        # Implementar resposta as mensagens
+        print(lora_msg)
 
 
 # Definição do horário inicial do RTC interno
@@ -78,6 +88,6 @@ mqtt_client.definir_cb(get_mqtt)
 while True:
     if lora.any(): # Verificar novos pacote LoRa
         sleep_ms(100)
-        packet = get_messages.lora([b for b in lora.read()])
+        packet = get_lora([b for b in lora.read()])
     mqtt_client.chk_msg() # Verificar novas mensagens MQTT
     
