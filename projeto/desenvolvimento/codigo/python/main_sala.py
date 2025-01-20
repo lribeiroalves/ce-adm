@@ -1,11 +1,11 @@
 from machine import UART
 from time import sleep_ms
-from CRC16.CRC16 import verificar_crc16
+from CRC16 import verificar_crc16
 
 from WIFI import WIFI
 from MQTT import MQTT
 from CardSD import CardSD
-from CalcADC import CalcADC
+from ADC import ADC
 from Clock import Clock
 
 
@@ -39,7 +39,7 @@ MQTT_PSWD = 'esp32'
 # Criar instancias
 wifi = WIFI(ssid=WIFI_SSID, pswd=WIFI_PSWD)
 mqtt_client = MQTT(addr=BROKER_ADRR, user=MQTT_USER, pswd=MQTT_PSWD, port=BROKER_PORT)
-# adc = CalcADC(PIN_ADC)
+# adc = ADC(PIN_SCL, PIN_SDA, canal = 0)
 # sd = CardSD(PIN_CS, PIN_SCK, PIN_MOSI, PIN_MISO)
 lora = UART(1, baudrate=4800, tx=PIN_LORA_TX, rx=PIN_LORA_RX)
 clock = Clock()
