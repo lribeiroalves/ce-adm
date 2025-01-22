@@ -1,10 +1,12 @@
 from machine import UART
+from CRC16 import calcular_crc16
 
 from WIFI import WIFI
 from MQTT import MQTT
 from MyDht import MyDht
 from Gyroscope import Gyroscope
 from CalcADC import CalcADC
+from ADC import ADC
 from Clock import Clock
 from CardSD import CardSD
 
@@ -41,9 +43,11 @@ wifi = WIFI(ssid=WIFI_SSID, pswd=WIFI_PSWD)
 mqtt_client = MQTT(addr=BROKER_ADRR, user=MQTT_USER, pswd=MQTT_PSWD, port=BROKER_PORT)
 dht = MyDht(PIN_DHT)
 gyro = Gyroscope(PIN_SCL, PIN_SDA)
-adc = CalcADC(PIN_ADC)
+# adc = CalcADC(PIN_ADC)
+adc = ADC(PIN_SCL, PIN_SDA)
+adc2 = ADC(PIN_SCL, PIN_SDA, canal=1)
 clock = Clock()
-sd = CardSD(PIN_CS, PIN_SCK, PIN_MOSI, PIN_MISO)
+# sd = CardSD(PIN_CS, PIN_SCK, PIN_MOSI, PIN_MISO)
 lora = UART(1, baudrate=4800, tx=PIN_LORA_TX, rx=PIN_LORA_RX)
 
 # Definição do horário inicial do RTC interno
@@ -51,8 +55,8 @@ clock.set_time(ano=25, mes=1, dia=15, hora=0, minuto=0, segundo=0)
 
 # Criação do arquivo data_logger.txt que armazenará as informações de leituras
 dte = clock.get_time()
-logger_path = f'/sd/data_logger/{dte["ano"]}_{dte["mes"]}_{dte["dia"]}_{dte["hora"]}_{dte["minuto"]}_{dte["segundo"]}.csv'
-sd.write_data(logger_path, 'day,month,year,hour,minute,second,umid,temp,gX,gY,gZ,adc_int,adc_dec\n', 'w')
+logger_path = f'/sd/data_logger/{dte["ano"]}_{dte["mes"]}_{dte["dia"]}.csv'
+# sd.write_data(logger_path, 'day,month,year,hour,minute,second,umid,temp,gX,gY,gZ,adc_int,adc_dec\n', 'w')
 
 
 def criar_pacote() -> dict[str:dict[str:bytes], str:str, str:list[bytes]]:
@@ -72,6 +76,9 @@ def criar_pacote() -> dict[str:dict[str:bytes], str:str, str:list[bytes]]:
     csv = f"{raw['day']},{raw['month']},{raw['year']},{raw['hour']},{raw['minute']},{raw['second']},{raw['umid']},{raw['temp']},{raw['gX']},{raw['gY']},{raw['gZ']},{raw['adc_int']},{raw['adc_dec']}\n"
     # mensagem pronta para transmissão LoRa
     lora_msg = [raw['addr'], raw['msg_type'], raw['day'], raw['month'], raw['year'], raw['hour'], raw['minute'], raw['second'], raw['umid'], raw['temp'], raw['gX'], raw['gY'], raw['gZ'], raw['adc_int'], raw['adc_dec']]
+    checksum = calcular_crc16(lora_msg)[0:2]
+    for byte in checksum:
+        lora_msg.append(byte)
     
     return {'raw': raw, 'csv': csv, 'lora_msg':lora_msg}
 
@@ -96,11 +103,14 @@ while True:
     dht.update()
     gyro.update()
     adc.update()
+    adc2.update()
 #     mqtt_client.chk_msg() # Veirificar novas mensagens MQTT
     
-    if [dht.update_enable, gyro.update_enable, adc.update_enable] == [0, 0, 0]:
+    if [dht.update_enable, gyro.update_enable, adc.update_enable, adc2.update_enable] == [0, 0, 0, 0]:
         pacote = criar_pacote() # Criar o pacote com as informações
-        sd.write_data(logger_path, pacote['csv'], 'a') # Salvar no SD
+        print(pacote['lora_msg'])
+        print(adc2.readings)
+#         sd.write_data(logger_path, pacote['csv'], 'a') # Salvar no SD
         lora.write(bytes(pacote['lora_msg'])) # Enviar os dados via LoRa
 #         mqtt_client.publicar_mensagem(topico_pub, pacote['raw']) # Enviar os dados via MQTT
         # Habilitar novas leituras dos sensores
