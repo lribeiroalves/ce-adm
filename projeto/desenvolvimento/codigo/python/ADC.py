@@ -401,8 +401,9 @@ class ADC:
         self.__adc.setVoltageRange_mV(ADS1115_RANGE_6144) # Define o range de leitura de 0 a 6,144V
         self.__adc.setMeasureMode(ADS1115_SINGLE) # Define que as medições serão realizadas em single shot
     
-    def __leitura(self):
+    def __leitura(self, conversao: bool = False):
         """ Leitura única do sensor em mV """
+        fator_conversao = 7.946 # Fator de conversão para uso do divisor de tensão
         channels = [ADS1115_COMP_0_GND, ADS1115_COMP_1_GND, ADS1115_COMP_2_GND, ADS1115_COMP_3_GND]
         self.__adc.setCompareChannels(channels[self.__canal]) # Define em qual pino a leitura será realizada
         self.__adc.startSingleMeasurement()
@@ -411,7 +412,9 @@ class ADC:
         
         leitura_V = self.__adc.getResult_V()
         leitura_mV = self.__adc.getResult_mV()
-        return leitura_V
+        leitura_convertida = leitura_V * fator_conversao
+        
+        return leitura_V if not conversao else leitura_convertida
     
     def update(self):
         """ Realiza as medições e calcula a média """
@@ -437,12 +440,16 @@ class ADC:
 if __name__ == '__main__':
     import time
     
-    adc = ADC(22, 21)
+    adc = ADC(22, 21, canal=0)
     while True:
         adc.update()
         
         if not adc.update_enable:
-            print(adc.readings)
+            pino = (adc.readings[0] + adc.readings[1] / 100)
+            fator = 7.946
+            fonte = pino * fator
+            print(f'Pino: {pino} V')
+            print(f'Fonte: {fonte} V')
             adc.update_enable = True
     
     
