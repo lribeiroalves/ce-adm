@@ -366,10 +366,11 @@ N_LEITURAS = 10
 
 class ADC:
     """ Classe para implementação específica do uso do sensor ADS1115 """
-    def __init__(self, scl_pin: int, sda_pin: int, canal: int = 0, time_ms: int = 100):
+    def __init__(self, scl_pin: int, sda_pin: int, canal: int = 0, get_pino:bool = False, time_ms: int = 100):
         self.__i2c = SoftI2C(scl=Pin(scl_pin), sda=Pin(sda_pin))
         self.__adc = ADS1115(ADS1115_ADDRESS, i2c=self.__i2c)
         self.__canal = canal if canal <= 3 else 0
+        self.__get_pino = get_pino
         self.__config()
         self.__read_time = time_ms
         self.__previous_time = 0
@@ -401,7 +402,7 @@ class ADC:
         self.__adc.setVoltageRange_mV(ADS1115_RANGE_6144) # Define o range de leitura de 0 a 6,144V
         self.__adc.setMeasureMode(ADS1115_SINGLE) # Define que as medições serão realizadas em single shot
     
-    def __leitura(self, conversao: bool = False):
+    def __leitura(self, retorna_pino: bool = False):
         """ Leitura única do sensor em mV """
         fator_conversao = 7.946 # Fator de conversão para uso do divisor de tensão
         channels = [ADS1115_COMP_0_GND, ADS1115_COMP_1_GND, ADS1115_COMP_2_GND, ADS1115_COMP_3_GND]
@@ -412,9 +413,10 @@ class ADC:
         
         leitura_V = self.__adc.getResult_V()
         leitura_mV = self.__adc.getResult_mV()
+        leitura_V, leitura_mV = (0,0) if leitura_V < 0 or leitura_mV < 0 else (leitura_V, leitura_mV)
         leitura_convertida = leitura_V * fator_conversao
         
-        return leitura_V if not conversao else leitura_convertida
+        return leitura_V if retorna_pino else leitura_convertida
     
     def update(self):
         """ Realiza as medições e calcula a média """
@@ -424,7 +426,7 @@ class ADC:
             self.__previous_time = current_time
             # realiza a leitura 10 vezes e calcula retorna a média
             if self.__count_readings < N_LEITURAS:
-                self.__read += self.__leitura()
+                self.__read += self.__leitura(self.__get_pino)
                 self.__count_readings += 1
             else:
                 self.__read = self.__read / N_LEITURAS
