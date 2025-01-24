@@ -443,16 +443,18 @@ if __name__ == '__main__':
     import time
     
     adc = ADC(22, 21, canal=0)
+    adc2 = ADC(22, 21, 2, True)
     while True:
         adc.update()
+        adc2.update()
         
         if not adc.update_enable:
             pino = (adc.readings[0] + adc.readings[1] / 100)
-            fator = 7.946
-            fonte = pino * fator
+            pino2 = (adc2.readings[0] + adc2.readings[1] / 100)
             print(f'Pino: {pino} V')
-            print(f'Fonte: {fonte} V')
             adc.update_enable = True
+            print(f'Pino2: {pino2} V')
+            adc2.update_enable = True
     
     
     
