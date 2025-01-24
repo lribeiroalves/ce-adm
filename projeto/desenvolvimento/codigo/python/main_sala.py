@@ -24,14 +24,14 @@ MSG_TYPE = {'leitura': 0x10, 'clock_get': 0x20, 'clock_set': 0x30}
 
 # Endereços de Rede e Broker MQTT
 # WIFI_SSID = 'SCA_Instrumentos'
-# WIFI_SSID = 'Galaxy S22EAA7'
-WIFI_SSID = 'ADM_SSV'
+WIFI_SSID = 'Galaxy S22EAA7'
+# WIFI_SSID = 'ADM_SSV'
 # WIFI_SSID = '2GNETVIRTUA_AP1811'
 # WIFI_PSWD = 'SCAOnline'
-# WIFI_PSWD = 'tbtt6469'
-WIFI_PSWD = '244466666'
+WIFI_PSWD = 'tbtt6469'
+# WIFI_PSWD = '244466666'
 # WIFI_PSWD = '194267140'
-BROKER_ADRR = '192.168.10.102'
+BROKER_ADRR = '192.168.182.161'
 BROKER_PORT = 1883
 MQTT_USER = 'esp32'
 MQTT_PSWD = 'esp32'
