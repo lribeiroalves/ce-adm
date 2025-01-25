@@ -112,7 +112,6 @@ def get_lora(packet: List[bytes], rssi_on:bool = True):
             set_time = [ESP_ADDR['sala'], ESP_ADDR[to_esp], MSG_TYPE['clock_set'], now['ano']-2000, now['mes'], now['dia'], now['hora'], now['minuto'], now['segundo']]
             for byte in calcular_crc16(set_time)[0:2]:
                 set_time.append(byte)
-            print(set_time)
             lora.write(bytes(set_time))
         # dados dos end_points
         elif len(lora_msg) == TAMANHO_PACOTE_LEITURA and lora_msg[2] == MSG_TYPE['leitura']:
