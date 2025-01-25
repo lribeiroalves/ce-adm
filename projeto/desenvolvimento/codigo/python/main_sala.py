@@ -2,7 +2,7 @@ from machine import UART
 from time import sleep_ms
 import ujson
 
-from CRC16 import verificar_crc16
+from CRC16 import *
 from WIFI import WIFI
 from MQTT import MQTT
 from CardSD import CardSD
@@ -20,7 +20,7 @@ PIN_MISO = 19
 
 
 # Endereçamento e tipos de mensagem
-ESP_ADDR = 0x03 # Sensor em Teste -> 0x01, sensor de controle -> 0x02, esp da sala técnica -> 0x03
+ESP_ADDR = {'teste': 0x01, 'controle': 0x02, 'sala': 0x03}
 MSG_TYPE = {'leitura': 0x10, 'clock_get': 0x20, 'clock_set': 0x30}
 
 
@@ -68,7 +68,7 @@ mqtt_client.definir_cb(get_mqtt)
 
 
 # Definição do horário inicial do RTC interno (Requisição ao servidor)
-req_time = {'addr': ESP_ADDR, 'msg_type': MSG_TYPE['clock_get'], 'check': 0x42}
+req_time = {'addr': ESP_ADDR['sala'], 'msg_type': MSG_TYPE['clock_get'], 'check': 0x42}
 while True:
     print('Requisitando horário ao servidor')
     mqtt_client.publicar_mensagem(topico_pub[1], req_time)
@@ -84,8 +84,13 @@ while True:
         break
 
 
+# Construção dos pacotes de transmissão e registro local
+def criar_pacote():
+    pass
+
+
 # Função para lidar com os pacotes recebidos via LoRa
-TAMANHO_PACOTE_LEITURA = 15
+TAMANHO_PACOTE_LEITURA = 16
 def get_lora(packet: List[bytes], rssi_on:bool = True):
     if rssi_on:
         lora_msg = packet[:-1]
@@ -96,12 +101,23 @@ def get_lora(packet: List[bytes], rssi_on:bool = True):
     
     # Verificação do checksum (CRC-16)
     lora_msg = verificar_crc16(lora_msg)
-    if lora_msg:
-        pass
+    
+    
+    if lora_msg and lora_msg[1] == ESP_ADDR['sala']:
     # Implementar respostas para as mensagens
-        # readings
-        
-        # req_time
+        # requisição de horário
+        if len(lora_msg) == 4 and lora_msg[2] == MSG_TYPE['clock_get']:
+            to_esp = 'teste' if lora_msg[0] == ESP_ADDR['teste'] else 'controle' # Direciona a mensagem como resposta a quem enviou apenas
+            now = clock.get_time()
+            set_time = [ESP_ADDR['sala'], ESP_ADDR[to_esp], MSG_TYPE['clock_set'], now['ano']-2000, now['mes'], now['dia'], now['hora'], now['minuto'], now['segundo']]
+            for byte in calcular_crc16(set_time)[0:2]:
+                set_time.append(byte)
+            print(set_time)
+            lora.write(bytes(set_time))
+        # dados dos end_points
+        elif len(lora_msg) == TAMANHO_PACOTE_LEITURA and lora_msg[2] == MSG_TYPE['leitura']:
+            pass
+ 
 
 # Criação do arquivo data_logger.txt que armazenará as informações de leituras
 # dte = clock.get_time()
@@ -113,6 +129,7 @@ def get_lora(packet: List[bytes], rssi_on:bool = True):
 while True:
     if lora.any(): # Verificar novos pacote LoRa
         sleep_ms(100)
-        packet = get_lora([b for b in lora.read()])
+        packet = [b for b in lora.read()]
+        get_lora(packet)
     mqtt_client.chk_msg() # Verificar novas mensagens MQTT
     
