@@ -49,24 +49,49 @@ clock = Clock()
 sd = CardSD(PIN_CS, PIN_SCK, PIN_MOSI, PIN_MISO)
 lora = UART(1, baudrate=4800, tx=PIN_LORA_TX, rx=PIN_LORA_RX)
 
-# Definição do horário inicial do RTC interno
-clock.set_time(ano=25, mes=1, dia=15, hora=0, minuto=0, segundo=0)
+
+# Variáveis globais de controle
+clock_setted = False
 
 
+# Função para lidar com os pacotes recebidos via LoRa
+def get_lora(packet:list[bytes], rssi_on:bool = True):
+    if rssi_on:
+        lora_msg = packet[:-1]
+        rssi = -(256-packet[-1])
+    else:
+        lora_msg = packet
+        rssi = None
+    
+    # Verificação do checksum (CRC-16)
+    lora_msg = verificar_crc16(lora_msg)
+    
+    
+    if lora_msg and lora_msg[1] == ESP_ADDR['teste']:
+        # Receber clock set do esp da sala
+        if len(lora_msg) == 9 and lora_msg[2] == MSG_TYPE['clock_set']:
+            global clock_setted
+            clock.set_time(ano = lora_msg[3], mes = lora_msg[4], dia = lora_msg[5], hora = lora_msg[6], minuto = lora_msg[7], segundo = [8])
+            time = clock.get_time()
+            print(f'Informação de horário recebida: {time["dia"]:02}/{time["mes"]:02}/{time["ano"]:04} - {time["hora"]:02}:{time["minuto"]:02}:{time["segundo"]:02}')
+            clock_setted = True
+            
 
 # Requisição de hora
-req_time = [ESP_ADDR['teste'], ESP_ADDR['sala'], MSG_TYPE['clock_get'], 0x42]
-checksum = calcular_crc16(req_time)[0:2]
+req_time = [ESP_ADDR['teste'], ESP_ADDR['sala'], MSG_TYPE['clock_get'], 0x42] # Construção da mensagem de requisição de hora
+checksum = calcular_crc16(req_time)[0:2] # Calculo do Checksum
 for byte in checksum:
     req_time.append(byte)
-while True:
-    print(req_time)
+while not clock_setted:
     lora.write(bytes(req_time))
     sleep(1)    
     if lora.any():
         sleep(0.05)
         packet = [b for b in lora.read()]
-        print(packet)
+        get_lora(packet)
+
+while True:
+    pass
 
 
 # Criação do arquivo data_logger.txt que armazenará as informações de leituras
