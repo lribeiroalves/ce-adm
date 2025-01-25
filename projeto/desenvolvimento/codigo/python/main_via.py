@@ -1,6 +1,7 @@
 from machine import UART
-from CRC16 import calcular_crc16
+from time import sleep
 
+from CRC16 import calcular_crc16
 from WIFI import WIFI
 from MQTT import MQTT
 from MyDht import MyDht
@@ -22,7 +23,7 @@ PIN_LORA_RX = 26
 PIN_LORA_TX =  27
 
 # Endereçamento e tipos de mensagem
-ESP_ADDR = 0x01 # Sensor em Teste -> 0x01, sensor de controle -> 0x02, esp da sala técnica -> 0x03
+ESP_ADDR = {'teste': 0x01, 'controle': 0x02, 'sala': 0x03}
 MSG_TYPE = {'leitura': 0x10, 'clock_get': 0x20, 'clock_set': 0x30}
 
 # Endereços de Rede e Broker MQTT
@@ -51,10 +52,27 @@ lora = UART(1, baudrate=4800, tx=PIN_LORA_TX, rx=PIN_LORA_RX)
 # Definição do horário inicial do RTC interno
 clock.set_time(ano=25, mes=1, dia=15, hora=0, minuto=0, segundo=0)
 
+
+
+# Requisição de hora
+req_time = [ESP_ADDR['teste'], ESP_ADDR['sala'], MSG_TYPE['clock_get'], 0x42]
+checksum = calcular_crc16(req_time)[0:2]
+for byte in checksum:
+    req_time.append(byte)
+while True:
+    print(req_time)
+    lora.write(bytes(req_time))
+    sleep(1)    
+    if lora.any():
+        sleep(0.05)
+        packet = [b for b in lora.read()]
+        print(packet)
+
+
 # Criação do arquivo data_logger.txt que armazenará as informações de leituras
 dte = clock.get_time()
 logger_path = f'/sd/data_logger/{dte["ano"]}_{dte["mes"]}_{dte["dia"]}_{dte["hora"]}_{dte["minuto"]}_{dte["segundo"]}.csv'
-sd.write_data(logger_path, 'day,month,year,hour,minute,second,umid,temp,gX,gY,gZ,adc_int,adc_dec\n', 'w')
+sd.write_data(logger_path, 'day,month,year,hour,minute,second,umid,temp,gX,gY,gZ,ad_sen_int,ad_sen_dec,ad_bat_int,ad_bat_dec\n', 'w')
 
 
 def criar_pacote() -> dict[str:dict[str:bytes], str:str, str:list[bytes]]:
@@ -62,7 +80,7 @@ def criar_pacote() -> dict[str:dict[str:bytes], str:str, str:list[bytes]]:
     dte = clock.get_time()
     # dados brutos
     raw = {
-        'addr': ESP_ADDR,
+        'addr': ESP_ADDR['teste'],
         'msg_type': MSG_TYPE['leitura'],
         'ad_sen_int': adc.readings[0], 'ad_sen_dec': adc.readings[1],
         'ad_bat_int': adc2.readings[0], 'ad_bat_dec': adc2.readings[1],
@@ -74,7 +92,7 @@ def criar_pacote() -> dict[str:dict[str:bytes], str:str, str:list[bytes]]:
     # mensagem pronta para o datalog
     csv = f"{raw['day']},{raw['month']},{raw['year']},{raw['hour']},{raw['minute']},{raw['second']},{raw['umid']},{raw['temp']},{raw['gX']},{raw['gY']},{raw['gZ']},{raw['ad_sen_int']},{raw['ad_sen_dec']},{raw['ad_bat_int']},{raw['ad_bat_dec']}\n"
     # mensagem pronta para transmissão LoRa
-    lora_msg = [raw['addr'], raw['msg_type'], raw['day'], raw['month'], raw['year'], raw['hour'], raw['minute'], raw['second'], raw['umid'], raw['temp'], raw['gX'], raw['gY'], raw['gZ'], raw['ad_sen_int'], raw['ad_sen_dec'], raw['ad_bat_int'], raw['ad_bat_dec']]
+    lora_msg = [raw['addr'], ESP_ADDR['sala'], raw['msg_type'], raw['day'], raw['month'], raw['year'], raw['hour'], raw['minute'], raw['second'], raw['umid'], raw['temp'], raw['gX'], raw['gY'], raw['gZ'], raw['ad_sen_int'], raw['ad_sen_dec'], raw['ad_bat_int'], raw['ad_bat_dec']]
     checksum = calcular_crc16(lora_msg)[0:2]
     for byte in checksum:
         lora_msg.append(byte)
@@ -95,10 +113,6 @@ def criar_pacote() -> dict[str:dict[str:bytes], str:str, str:list[bytes]]:
 #     if topic.decode() == topico_sub[0]:
 #         print(topic.decode(), msg.decode())
 # mqtt_client.definir_cb(callback)
-
-
-# Requisição de hora
-#======================================
 
 
 # Leitura dos sensores e tratamento dos dados
