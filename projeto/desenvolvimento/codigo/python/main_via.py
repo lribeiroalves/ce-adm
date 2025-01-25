@@ -1,7 +1,7 @@
 from machine import UART
 from time import sleep
 
-from CRC16 import calcular_crc16
+from CRC16 import *
 from WIFI import WIFI
 from MQTT import MQTT
 from MyDht import MyDht
@@ -71,7 +71,7 @@ def get_lora(packet:list[bytes], rssi_on:bool = True):
         # Receber clock set do esp da sala
         if len(lora_msg) == 9 and lora_msg[2] == MSG_TYPE['clock_set']:
             global clock_setted
-            clock.set_time(ano = lora_msg[3], mes = lora_msg[4], dia = lora_msg[5], hora = lora_msg[6], minuto = lora_msg[7], segundo = [8])
+            clock.set_time(ano = lora_msg[3], mes = lora_msg[4], dia = lora_msg[5], hora = lora_msg[6], minuto = lora_msg[7], segundo = lora_msg[8])
             time = clock.get_time()
             print(f'Informação de horário recebida: {time["dia"]:02}/{time["mes"]:02}/{time["ano"]:04} - {time["hora"]:02}:{time["minuto"]:02}:{time["segundo"]:02}')
             clock_setted = True
