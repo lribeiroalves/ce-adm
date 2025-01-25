@@ -19,8 +19,8 @@ mqtt_user = 'flask'
 mqtt_passwd = 'flask'
 mqtt_topics = [
     'test/server/hello',
-    'test/server/read',
-    'adm/esp_sensor/server',
+    'adm/esp_sala/server/req_time',
+    'adm/esp_sala/server/reading',
     ]
 client_mqtt = mqtt.Client()
 client_mqtt.username_pw_set(mqtt_user, mqtt_passwd)
@@ -47,20 +47,31 @@ def on_message(app, client, userdata, message):
             }
             socketio.emit('mqtt_message', data)
             
-        case 'test/server/read':
+        case 'adm/esp_sala/server/req_time':
             if is_valid_json(msg):
                 msg = json.loads(msg)
-                with app.app_context():
-                    new_data = Readings(name=msg['name'], pacote=msg['pacote'], led=msg['led'], adc=msg['adc'], date=datetime.datetime.now())
-                    db.session.add(new_data)
-                    db.session.commit()
+                if msg['msg_type'] == 0x20 and msg['check'] == 0x42:
+                    # Send back time
+                    time = datetime.datetime.now()
+                    msg = {
+                        'year': time.year,
+                        'month': time.month,
+                        'day': time.day,
+                        'hour': time.hour,
+                        'minute': time.minute,
+                        'second': time.second
+                    }
+                    msg_json = json.dumps(msg)
+                    client_mqtt.publish('adm/server/esp_sala', msg_json)
+                else:
+                    print('Parâmetros inválidos.')
             else:
                 print('Not a Valid JSON Object')
         
-        case 'adm/esp_sensor/server':
+        case 'adm/esp_sensor/server/reading':
             if is_valid_json(msg):
                 msg = json.loads(msg)
-                chaves_esperadas = ['addr', 'msg_type', 'temp', 'umid', 'gX', 'gY', 'gZ', 'adc_int', 'adc_dec', 'year', 'month', 'day', 'hour', 'minute', 'second']
+                chaves_esperadas = ['addr', 'msg_type', 'temp', 'umid', 'gX', 'gY', 'gZ', 'ad_sen_int', 'ad_sen_dec', 'ad_bat_int', 'ad_bat_dec', 'year', 'month', 'day', 'hour', 'minute', 'second']
                 if set(chaves_esperadas) == set(msg.keys()):
                     with app.app_context():
                         new_data = EspSensor()
@@ -72,8 +83,10 @@ def on_message(app, client, userdata, message):
                         new_data.gX = msg['gX']
                         new_data.gY = msg['gY']
                         new_data.gZ = msg['gZ']
-                        new_data.adc_int = msg['adc_int']
-                        new_data.adc_dec = msg['adc_dec']
+                        new_data.ad_sen_int = msg['ad_sen_int']
+                        new_data.ad_sen_dec = msg['ad_sen_dec']
+                        new_data.ad_bat_int = msg['ad_bat_int']
+                        new_data.ad_bat_dec = msg['ad_bat_dec']
                         new_data.year = msg['year']
                         new_data.month = msg['month']
                         new_data.day = msg['day']
@@ -109,6 +122,7 @@ def init_app(app):
     try:
         client_mqtt.on_message = lambda client, userdata, message: on_message(app, client, userdata, message) # Associa a função de callback para mensagens
         client_mqtt.connect(broker_address)
+        print(f'Conectado ao broker MQTT: {broker_address}')
         for t in mqtt_topics:
             client_mqtt.subscribe(t)
 
