@@ -85,8 +85,21 @@ while True:
 
 
 # Construção dos pacotes de transmissão e registro local
-def criar_pacote():
-    pass
+def criar_pacote(msg: list[bytes], tipo: str):
+    if tipo == 'via':
+        pacote = {
+                'addr_from': msg[0], 'addr_to': msg[1],
+                'msg_type': msg[2],
+                'day': msg[3], 'month': msg[4], 'year': msg[5],
+                'hour': msg[6], 'minute': msg[7], 'second': msg[8],
+                'umid': msg[9], 'temp': msg[10],
+                'gX': msg[11], 'gY': msg[12], 'gZ': msg[13],
+                'ad_sen_int': msg[14], 'ad_sen_dec': msg[15],
+                'ad_bat_int': msg[16], 'ad_bat_dec': msg[17]
+        } 
+        return pacote
+    elif tipo == 'sala':
+        pass
 
 
 # Função para lidar com os pacotes recebidos via LoRa
@@ -115,7 +128,8 @@ def get_lora(packet: List[bytes], rssi_on:bool = True):
             lora.write(bytes(set_time))
         # dados dos end_points
         elif len(lora_msg) == TAMANHO_PACOTE_LEITURA and lora_msg[2] == MSG_TYPE['leitura']:
-            pass
+            pack = criar_pacote(lora_msg, 'via')
+            mqtt_client.publicar_mensagem(topico_pub[0], pack)
  
 
 # Criação do arquivo data_logger.txt que armazenará as informações de leituras

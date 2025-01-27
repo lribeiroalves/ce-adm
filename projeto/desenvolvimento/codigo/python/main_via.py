@@ -90,9 +90,6 @@ while not clock_setted:
         packet = [b for b in lora.read()]
         get_lora(packet)
 
-while True:
-    pass
-
 
 # Criação do arquivo data_logger.txt que armazenará as informações de leituras
 dte = clock.get_time()
@@ -148,7 +145,7 @@ while True:
     adc2.update()
 #     mqtt_client.chk_msg() # Veirificar novas mensagens MQTT
     
-    if [dht.update_enable, gyro.update_enable, adc.update_enable, adc2.update_enable] == [0, 0, 0, 0]:
+    if [dht.update_enable, gyro.update_enable, adc.update_enable, adc2.update_enable] == [0] * 4:
         pacote = criar_pacote() # Criar o pacote com as informações
         sd.write_data(logger_path, pacote['csv'], 'a') # Salvar no SD
         lora.write(bytes(pacote['lora_msg'])) # Enviar os dados via LoRa
