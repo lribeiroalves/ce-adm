@@ -3,7 +3,7 @@
 from . import db
 
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import String, Integer, DateTime, Boolean
+from sqlalchemy import String, Integer, DateTime, Boolean, Float
 from typing import Optional
 
 
@@ -21,9 +21,10 @@ class Readings(db.Model):
 
 class EspSensor(db.Model):
     id:Mapped[int] = mapped_column(primary_key=True)
-    addr:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
+    addr_from:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
+    addr_to:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
     msg_type:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
-    temp:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
+    temp:Mapped[float] = mapped_column(Float(), nullable=False, unique=False)
     umid:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
     gX:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
     gY:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
@@ -46,7 +47,8 @@ class EspSensor(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
-            'addr': self.addr,
+            'addr_from': self.addr_from,
+            'adrr_to': self.addr_to,
             'msg_type': self.msg_type,
             'temp': self.temp,
             'umid': self.umid,

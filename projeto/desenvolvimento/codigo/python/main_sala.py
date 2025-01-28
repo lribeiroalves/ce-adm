@@ -26,14 +26,14 @@ MSG_TYPE = {'leitura': 0x10, 'clock_get': 0x20, 'clock_set': 0x30}
 
 # Endereços de Rede e Broker MQTT
 # WIFI_SSID = 'SCA_Instrumentos'
-# WIFI_SSID = 'Galaxy S22EAA7'
+WIFI_SSID = 'Galaxy S22EAA7'
 # WIFI_SSID = 'ADM_SSV'
-WIFI_SSID = '2GNETVIRTUA_AP1811'
+# WIFI_SSID = '2GNETVIRTUA_AP1811'
 # WIFI_PSWD = 'SCAOnline'
-# WIFI_PSWD = 'tbtt6469'
+WIFI_PSWD = 'tbtt6469'
 # WIFI_PSWD = '244466666'
-WIFI_PSWD = '194267140'
-BROKER_ADRR = '192.168.0.10'
+# WIFI_PSWD = '194267140'
+BROKER_ADRR = '192.168.252.225'
 BROKER_PORT = 1883
 MQTT_USER = 'esp32'
 MQTT_PSWD = 'esp32'
@@ -103,7 +103,7 @@ def criar_pacote(msg: list[bytes], tipo: str):
 
 
 # Função para lidar com os pacotes recebidos via LoRa
-TAMANHO_PACOTE_LEITURA = 16
+TAMANHO_PACOTE_LEITURA = 18
 def get_lora(packet: List[bytes], rssi_on:bool = True):
     if rssi_on:
         lora_msg = packet[:-1]

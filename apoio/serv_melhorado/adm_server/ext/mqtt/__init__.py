@@ -68,15 +68,16 @@ def on_message(app, client, userdata, message):
             else:
                 print('Not a Valid JSON Object')
         
-        case 'adm/esp_sensor/server/reading':
+        case 'adm/esp_sala/server/reading':
             if is_valid_json(msg):
                 msg = json.loads(msg)
-                chaves_esperadas = ['addr', 'msg_type', 'temp', 'umid', 'gX', 'gY', 'gZ', 'ad_sen_int', 'ad_sen_dec', 'ad_bat_int', 'ad_bat_dec', 'year', 'month', 'day', 'hour', 'minute', 'second']
+                chaves_esperadas = ['addr_from', 'addr_to', 'msg_type', 'temp', 'umid', 'gX', 'gY', 'gZ', 'ad_sen_int', 'ad_sen_dec', 'ad_bat_int', 'ad_bat_dec', 'year', 'month', 'day', 'hour', 'minute', 'second']
                 if set(chaves_esperadas) == set(msg.keys()):
                     with app.app_context():
                         new_data = EspSensor()
 
-                        new_data.addr = msg['addr']
+                        new_data.addr_from = msg['addr_from']
+                        new_data.addr_to = msg['addr_to']
                         new_data.msg_type = msg['msg_type']
                         new_data.temp = msg['temp']
                         new_data.umid = msg['umid']
