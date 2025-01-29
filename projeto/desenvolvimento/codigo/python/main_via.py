@@ -12,7 +12,6 @@ from CardSD import CardSD
 
 # PINOUT
 PIN_DHT = 33
-PIN_ADC = 34
 PIN_SCL = 22
 PIN_SDA = 21
 PIN_CS = 5
