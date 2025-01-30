@@ -108,34 +108,52 @@ def criar_pacote(msg: list[bytes], tipo: str):
         pass
 
 
+# Função para separar o buffer recebido em cada mensagem 
+def separar_buffer(buffer:list):
+    mensagens_separadas = []
+    final = [0xFF, 0xFF, 0xFF]
+    final_len = len(final)
+    buffer_len = len(buffer)
+    
+    if buffer_len >= final_len + 5:
+        for i in range(buffer_len - final_len + 1):
+            if buffer[i:i + final_len] == final:
+                mensagem = buffer[i - buffer[i + final_len]: i + final_len + 4]
+                mensagens_separadas.append(mensagem)
+    
+    return mensagens_separadas
+
+
 # Função para lidar com os pacotes recebidos via LoRa
 TAMANHO_PACOTE_LEITURA = 18
 def get_lora(packet: List[bytes], rssi_on:bool = True):
-    if rssi_on:
-        lora_msg = packet[:-1]
-        rssi = -(256-packet[-1])
-    else:
-        lora_msg = packet
-        rssi = None
-    
-    # Verificação do checksum (CRC-16)
-    lora_msg = verificar_crc16(lora_msg)
-    
-    
-    if lora_msg and lora_msg[1] == ESP_ADDR['sala']:
-    # Implementar respostas para as mensagens
-        # requisição de horário
-        if len(lora_msg) == 4 and lora_msg[2] == MSG_TYPE['clock_get']:
-            to_esp = 'teste' if lora_msg[0] == ESP_ADDR['teste'] else 'controle' # Direciona a mensagem como resposta a quem enviou apenas
-            now = clock.get_time()
-            set_time = [ESP_ADDR['sala'], ESP_ADDR[to_esp], MSG_TYPE['clock_set'], now['ano']-2000, now['mes'], now['dia'], now['hora'], now['minuto'], now['segundo']]
-            for byte in calcular_crc16(set_time)[0:2]:
-                set_time.append(byte)
-            lora.write(bytes(set_time))
-        # dados dos end_points
-        elif len(lora_msg) == TAMANHO_PACOTE_LEITURA and lora_msg[2] == MSG_TYPE['leitura']:
-            pack = criar_pacote(lora_msg, 'via')
-            mqtt_client.publicar_mensagem(topico_pub[0], pack)
+    pacotes = separar_buffer(packet)
+    for pacote em pacotes:
+        if rssi_on:
+            lora_msg = packet[:-1]
+            rssi = -(256-packet[-1])
+        else:
+            lora_msg = packet
+            rssi = None
+        
+        # Verificação do checksum (CRC-16)
+        lora_msg = verificar_crc16(lora_msg)
+        
+        
+        if lora_msg and lora_msg[1] == ESP_ADDR['sala']:
+        # Implementar respostas para as mensagens
+            # requisição de horário
+            if len(lora_msg) == 4 and lora_msg[2] == MSG_TYPE['clock_get']:
+                to_esp = 'teste' if lora_msg[0] == ESP_ADDR['teste'] else 'controle' # Direciona a mensagem como resposta a quem enviou apenas
+                now = clock.get_time()
+                set_time = [ESP_ADDR['sala'], ESP_ADDR[to_esp], MSG_TYPE['clock_set'], now['ano']-2000, now['mes'], now['dia'], now['hora'], now['minuto'], now['segundo']]
+                for byte in calcular_crc16(set_time)[0:2]:
+                    set_time.append(byte)
+                lora.write(bytes(set_time))
+            # dados dos end_points
+            elif len(lora_msg) == TAMANHO_PACOTE_LEITURA and lora_msg[2] == MSG_TYPE['leitura']:
+                pack = criar_pacote(lora_msg, 'via')
+                mqtt_client.publicar_mensagem(topico_pub[0], pack)
  
 
 # Criação do arquivo data_logger.txt que armazenará as informações de leituras

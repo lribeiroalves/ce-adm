@@ -28,6 +28,9 @@ class Gyroscope:
     
     @property
     def readings(self):
+        for v in self.__readings:
+            v = 0xfe if v == 0xff else v
+        
         return self.__readings
     
     

@@ -114,6 +114,7 @@ def criar_pacote() -> dict[str:dict[str:bytes], str:str, str:list[bytes]]:
     csv = f"{raw['day']},{raw['month']},{raw['year']},{raw['hour']},{raw['minute']},{raw['second']},{raw['umid']},{raw['temp']},{raw['gX']},{raw['gY']},{raw['gZ']},{raw['ad_sen_int']},{raw['ad_sen_dec']},{raw['ad_bat_int']},{raw['ad_bat_dec']}\n"
     # mensagem pronta para transmissão LoRa
     lora_msg = [raw['addr'], ESP_ADDR['sala'], raw['msg_type'], raw['day'], raw['month'], raw['year'], raw['hour'], raw['minute'], raw['second'], raw['umid'], raw['temp'], raw['gX'], raw['gY'], raw['gZ'], raw['ad_sen_int'], raw['ad_sen_dec'], raw['ad_bat_int'], raw['ad_bat_dec']]
+    lora_msg += [0xFF, 0xFF, 0xFF, len(lora_msg)] # Adiciona uma tag de final de mensagem
     checksum = calcular_crc16(lora_msg)[0:2]
     for byte in checksum:
         lora_msg.append(byte)
