@@ -33,7 +33,7 @@ def verificar_crc16(data:list[bytes]) -> list[bytes]:
 if __name__ == '__main__':
     from machine import UART
     
-    serial = UART(1, baudrate=115200, tx=22, rx=23)
+    serial = UART(1, baudrate=115200, tx=27, rx=26)
     
     pacote1 = [0x01, 0x03, # addr
                0x10, # type
@@ -52,7 +52,7 @@ if __name__ == '__main__':
                89, 145, # umid, temp
                10, 20, 30, # gx, gy, gz
                4, 99, 2, 45, # adc1, adc2
-               0xFF, 0xFd, 0xFF, 18 # final de mensagem
+               0xFF, 0xFF, 0xFF, 18 # final de mensagem
                ]
 
     pacote3 = [0x01, 0x03, # addr
@@ -68,5 +68,9 @@ if __name__ == '__main__':
         p.append(0x42)
     
     pacote_completo = pacote1 + pacote2 + pacote3
+    print(pacote_completo)
+    print(len(pacote_completo))
     
-    serial.write(bytes(pacote_completo))
+    p = bytes(pacote_completo)
+    
+    serial.write(p)

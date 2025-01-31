@@ -8,6 +8,20 @@ class Clock:
         self.__rtc = RTC()
         self.__rtc.datetime((2025, 1, 1, 0, 0, 0, 0, 0))
         self.__keys = ['ano', 'mes', 'dia', 'semana', 'hora', 'minuto', 'segundo', 'm_seg']
+        self.__is_set = False
+    
+    
+    @property
+    def is_set(self):
+        return self.__is_set
+    
+    
+    @is_set.setter
+    def is_set(self, value:bool):
+        if value == False:
+            self.__is_set = False
+        else:
+            raise ValueError('Esse atributo só pode ser alterado para falso.')
     
     
     def get_time(self):
@@ -23,6 +37,7 @@ class Clock:
             ano += 2000
         
         self.__rtc.datetime((ano, mes, dia, 0, hora, minuto, segundo, 0))
+        self.__setted = True
 
 
 if __name__ == '__main__':
