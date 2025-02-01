@@ -37,7 +37,7 @@ class Clock:
             ano += 2000
         
         self.__rtc.datetime((ano, mes, dia, 0, hora, minuto, segundo, 0))
-        self.__setted = True
+        self.__is_set = True
 
 
 if __name__ == '__main__':

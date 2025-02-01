@@ -122,9 +122,6 @@ def separar_buffer(buffer:list):
                 mensagens_separadas.append(mensagem)
     
     return mensagens_separadas
-
-
-c
  
 
 # Criação do arquivo data_logger.txt que armazenará as informações de leituras
