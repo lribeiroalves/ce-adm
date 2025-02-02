@@ -32,11 +32,11 @@ def criar_pacote(esp:str, clock:Clock = None, adc0:ADC = None, adc1:ADC = None, 
         # Aguardando definição do hardware
         return {'raw': [], 'csv': []}
 
-    elif esp == 'via':
+    elif esp in ['teste', 'controle']:
         time = clock.get_time()
         # dados brutos
         raw = {
-            'addr': ESP_ADDR['teste'],
+            'addr': ESP_ADDR[esp],
             'msg_type': MSG_TYPE['leitura'],
             'ad_sen_int': adc0.readings[0], 'ad_sen_dec': adc0.readings[1],
             'ad_bat_int': adc1.readings[0], 'ad_bat_dec': adc1.readings[1],
@@ -177,6 +177,7 @@ def atualizar_clock(esp:str, lora:UART = None, mqtt:MQTT = None, clock:Clock = N
             time_req_msg.append(byte)
         # Enviar a mensagem construída e agurdar resposta a cada 3s
         while not clock.is_set:
+            print('Requisitando horário ao Gateway')
             lora.write(bytes(time_req_msg))
             sleep_ms(3000)
             if lora.any():

@@ -134,9 +134,7 @@ def separar_buffer(buffer:list):
 while True:
     if lora.any(): # Verificar novos pacote LoRa
         sleep_ms(10) #10ms garante pacotes de até 144 Bytes (4 pacotes completos)
-        packet = [b for b in lora.read()]
-        print(packet, end='\n'*3)
-        print(len(packet)) ###########################
-        get_lora(packet)
+        buffer = [b for b in lora.read()]
+        get_lora(buffer)
     mqtt_client.chk_msg() # Verificar novas mensagens MQTT
     
