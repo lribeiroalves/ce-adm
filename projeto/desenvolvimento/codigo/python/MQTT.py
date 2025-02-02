@@ -55,10 +55,13 @@ class MQTT:
         print(f'Desconectado do broker MQTT: "{self.__addr}"')
     
     
-    def definir_cb(self, cb_func):
+    def definir_cb(self, cb_func, clock=None):
         """ Definir função de callback """
         if callable(cb_func):
-            self.__client.set_callback(cb_func)
+            if clock:
+                self.__client.set_callback(lambda topic, msg: cb_func(topic, msg, clock))
+            else:
+                self.__client.set_callback(cb_func)
         else:
             print('É necessário passar um callable com 2 argumentos Ex:"callback_function(topic, msg)"')
     
