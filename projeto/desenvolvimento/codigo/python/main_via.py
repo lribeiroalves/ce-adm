@@ -38,7 +38,7 @@ atualizar_clock(esp='via', lora=lora, clock=clock)
 
 # Criação do arquivo data_logger.txt que armazenará as informações de leituras
 time = clock.get_time()
-logger_path = f'/sd/data_logger/{time["ano"]}_{time["mes"]}_{time["dia"]}_{time["hora"]}_{time["minuto"]}_{time["segundo"]}.csv'
+logger_path = f'/sd/data_logger/readings/{time["ano"]}_{time["mes"]}_{time["dia"]}_{time["hora"]}_{time["minuto"]}_{time["segundo"]}.csv'
 sd.write_data(logger_path, 'day,month,year,hour,minute,second,umid,temp,gX,gY,gZ,ad_sen_int,ad_sen_dec,ad_bat_int,ad_bat_dec\n', 'w')
 
 

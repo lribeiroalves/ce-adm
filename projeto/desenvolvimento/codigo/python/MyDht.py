@@ -1,18 +1,26 @@
 from machine import Pin
 import dht as DHT
 from time import sleep, sleep_ms, ticks_ms
+from Clock import Clock
+from CardSD import CardSD
 
 
 class MyDht:
     """ Classe para implementação específica do uso do modulo dht
     para leituras de umidade e temperatura em períodos predefinidos"""
     
-    def __init__(self, dht_pin: int = 33, time_ms: int = 1000):
+    def __init__(self, dht_pin: int = 33, time_ms: int = 1000, clock:Clock = None, sd:CardSD = None):
         self.__dht_object = DHT.DHT11(Pin(dht_pin))
         self.__read_time = time_ms
         self.__previous_time = 0
         self.__readings = [0, 0]
         self.__update_enable = True
+        self.__clock = clock
+        self.__sd = sd
+        if self.__sd and self.__clock: # Create Data logger
+            time = self.__clock.get_time()
+            self.__log_path = f'/sd/data_logger/dht/{time["ano"]}_{time["mes"]}_{time["dia"]}_{time["hora"]}_{time["minuto"]}_{time["segundo"]}.csv'
+            self.__sd.write_data(self.__log_path, 'temp,umid,year,month,day,hour,minute,second\n', 'w')
     
     
     @property
@@ -42,7 +50,11 @@ class MyDht:
             em caso de erro, repete recursivamente até que consiga o valor """
         try:
             self.__dht_object.measure()
-            return (self.__dht_object.temperature() * 5, self.__dht_object.humidity())
+            r = (self.__dht_object.temperature() * 5, self.__dht_object.humidity())
+            if self.__clock and self.__sd:
+                time = self.__clock.get_time()
+                self.__sd.write_data(self.__log_path, f'{r[0]},{r[1]},,{time["ano"]},{time["mes"]},{time["dia"]},{time["hora"]},{time["minuto"]},{time["segundo"]}', 'a')
+            return r
         except OSError:
             sleep_ms(10)
             return self.read_dht()

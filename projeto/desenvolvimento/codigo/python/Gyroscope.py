@@ -1,5 +1,7 @@
 from machine import Pin, SoftI2C
 from time import sleep, sleep_ms, ticks_ms
+from Clock import Clock
+from CardSD import CardSD
 
 # SENSOR ADRRESSES
 MPU = 0x68
@@ -13,13 +15,19 @@ class Gyroscope:
     """ Classe que implementa as funções de leitura do giroscopio
         do sensor MPU 5060 em tempos predefinidos """
     
-    def __init__(self, scl_pin: int = 22, sda_pin: int = 21, time_ms: int = 100):
+    def __init__(self, scl_pin: int = 22, sda_pin: int = 21, time_ms: int = 100, sd:CardSD = None, clock:Clock = None):
         self.__i2c = SoftI2C(scl=Pin(scl_pin), sda=Pin(sda_pin))
         self.__read_time = time_ms
         self.__previous_time = 0
         self.__readings = [0,0,0]
         self.__update_enable = True
         self.__count_readings = 0
+        self.__clock = clock
+        self.__sd = sd
+        if self.__sd and self.__clock: # Create Data logger
+            time = self.__clock.get_time()
+            self.__log_path = f'/sd/data_logger/gyro/{time["ano"]}_{time["mes"]}_{time["dia"]}_{time["hora"]}_{time["minuto"]}_{time["segundo"]}.csv'
+            self.__sd.write_data(self.__log_path, 'gX,gY,gZ,year,month,day,hour,minute,second\n', 'w')
         
         # acordar o sensor MPU 5060
         self.__i2c.writeto_mem(MPU, PWR_MNGM, bytes([0x00]))
@@ -45,7 +53,7 @@ class Gyroscope:
             self.__update_enable = True
             self.__readings = [0, 0, 0]
         else:
-            raise ValueError('Esse atributo só pode ser alterado para verdadeiro.')
+            raise ValueError('Esse atributo só pode ser alterado para verdadeiro.')        
     
     
     def __make_signed(self, num: int) -> int:
@@ -72,6 +80,10 @@ class Gyroscope:
         for eixo in eixos:
             # torna o valor absoluto, retira ruidos, considera apenas valores acima de zero e converte em um byte (cada eixo)
             leitura.append(max([0, abs(self.__make_signed(eixo)) - 100]) >> 7)
+        
+        if self.__clock and self.__sd:
+            time = self.__clock.get_time()
+            self.__sd.write_data(self.__log_path, f'{leitura[0]},{leitura[1]},{leitura[2]},{time["ano"]},{time["mes"]},{time["dia"]},{time["hora"]},{time["minuto"]},{time["segundo"]}', 'a')
         
         return leitura
     
