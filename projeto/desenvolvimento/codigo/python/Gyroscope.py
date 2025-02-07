@@ -83,7 +83,7 @@ class Gyroscope:
         
         if self.__clock and self.__sd:
             time = self.__clock.get_time()
-            self.__sd.write_data(self.__log_path, f'{leitura[0]},{leitura[1]},{leitura[2]},{time["ano"]},{time["mes"]},{time["dia"]},{time["hora"]},{time["minuto"]},{time["segundo"]}', 'a')
+            self.__sd.write_data(self.__log_path, f'{leitura[0]},{leitura[1]},{leitura[2]},{time["ano"]},{time["mes"]},{time["dia"]},{time["hora"]},{time["minuto"]},{time["segundo"]}\n', 'a')
         
         return leitura
     
@@ -108,8 +108,14 @@ class Gyroscope:
 
 
 if __name__ == '__main__':
+    from CardSD import CardSD
+    from Clock import Clock
+    
+    sd = CardSD()
+    clock = Clock()
+    
     # Exemplo de aplicação da classe Giroscope
-    gyro = Gyroscope()
+    gyro = Gyroscope(sd=sd, clock=clock)
     while True:
         gyro.update()
         if not gyro.update_enable:

@@ -53,7 +53,7 @@ class MyDht:
             r = (self.__dht_object.temperature() * 5, self.__dht_object.humidity())
             if self.__clock and self.__sd:
                 time = self.__clock.get_time()
-                self.__sd.write_data(self.__log_path, f'{r[0]},{r[1]},,{time["ano"]},{time["mes"]},{time["dia"]},{time["hora"]},{time["minuto"]},{time["segundo"]}', 'a')
+                self.__sd.write_data(self.__log_path, f'{r[0]},{r[1]},{time["ano"] - 2000},{time["mes"]},{time["dia"]},{time["hora"]},{time["minuto"]},{time["segundo"]}\n', 'a')
             return r
         except OSError:
             sleep_ms(10)
@@ -78,10 +78,16 @@ class MyDht:
 
 if __name__ == '__main__':
     # Exemplo de aplicação da classe MyDht
-    dht = MyDht(dht_pin=33)
+    from CardSD import CardSD
+    from Clock import Clock
+    
+    sd = CardSD()
+    clock = Clock()
+    
+    dht = MyDht(dht_pin=33, sd=sd, clock=clock)
     while True:
         dht.update()
         if not dht.update_enable:
-            print(dht.readings)
+            print(dht.readings[0]/5, dht.readings[1])
             dht.update_enable = True
         

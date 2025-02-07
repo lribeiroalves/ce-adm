@@ -359,6 +359,8 @@ class ADS1015(ADS1115):
 
 from machine import SoftI2C, Pin
 from time import ticks_ms
+from Clock import Clock
+from CardSD import CardSD
 
 ADS1115_ADDRESS = 0x48
 N_LEITURAS = 10
@@ -366,7 +368,7 @@ N_LEITURAS = 10
 
 class ADC:
     """ Classe para implementação específica do uso do sensor ADS1115 """
-    def __init__(self, scl_pin: int, sda_pin: int, canal: int = 0, get_pino:bool = False, time_ms: int = 100):
+    def __init__(self, scl_pin: int, sda_pin: int, canal: int = 0, get_pino:bool = False, time_ms: int = 100, clock:Clock = None, sd:CardSD = None):
         self.__i2c = SoftI2C(scl=Pin(scl_pin), sda=Pin(sda_pin))
         self.__adc = ADS1115(ADS1115_ADDRESS, i2c=self.__i2c)
         self.__canal = canal if canal <= 3 else 0
@@ -378,6 +380,12 @@ class ADC:
         self.__readings = [0,0]
         self.__update_enable = True
         self.__count_readings = 0
+        self.__clock = clock
+        self.__sd = sd
+        if self.__sd and self.__clock: # Create Data logger
+            time = self.__clock.get_time()
+            self.__log_path = f'/sd/data_logger/adc/canal{self.__canal}/{time["ano"]}_{time["mes"]}_{time["dia"]}_{time["hora"]}_{time["minuto"]}_{time["segundo"]}.csv'
+            self.__sd.write_data(self.__log_path, 'tensao,year,month,day,hour,minute,second,mili_second\n', 'w')
     
     @property
     def readings(self):
@@ -417,6 +425,11 @@ class ADC:
         leitura_mV = self.__adc.getResult_mV()
         leitura_V, leitura_mV = (0,0) if leitura_V < 0 or leitura_mV < 0 else (leitura_V, leitura_mV)
         leitura_convertida = leitura_V * fator_conversao
+
+        if self.__clock and self.__sd:
+            time = self.__clock.get_time()
+            v = leitura_V if retorna_pino else leitura_convertida
+            self.__sd.write_data(self.__log_path, f'{v},{time["ano"]},{time["mes"]},{time["dia"]},{time["hora"]},{time["minuto"]},{time["segundo"]},{time["m_seg"]}\n', 'a')
         
         return leitura_V if retorna_pino else leitura_convertida
     
@@ -443,9 +456,14 @@ class ADC:
 
 if __name__ == '__main__':
     import time
+    from CardSD import CardSD
+    from Clock import Clock
     
-    adc = ADC(22, 21, canal=0)
-    adc2 = ADC(22, 21, 2, True)
+    clock = Clock()
+    sd = CardSD()
+    
+    adc = ADC(22, 21, canal=0, sd=sd, clock=clock)
+    adc2 = ADC(22, 21, 2, True, sd=sd, clock=clock)
     while True:
         adc.update()
         adc2.update()

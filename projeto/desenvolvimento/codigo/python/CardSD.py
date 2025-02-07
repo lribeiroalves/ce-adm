@@ -45,8 +45,14 @@ class CardSD:
             dir_path = '/'.join(path.split('/')[:-1])
             try:
                 os.listdir(dir_path)
-            except OSError:
-                os.mkdir(dir_path)
+            except OSError: # Recursivamente cria o diretorio
+                directory = ''
+                for d in dir_path.split('/')[1:]:
+                    directory = f'{directory}/{d}'
+                    try:
+                        os.listdir(directory)
+                    except OSError:
+                        os.mkdir(directory)
             # Escrever dados no arquivo
             with open(path, mode.lower()) as file:
                 file.write(data)
