@@ -10,7 +10,7 @@ import datetime
 
 from adm_server.ext.socket_io import socketio
 from adm_server.ext.database import db
-from adm_server.ext.database.models import Readings, EspSensor
+from adm_server.ext.database.models import *
 
 
 broker_address = 'localhost'
@@ -74,7 +74,7 @@ def on_message(app, client, userdata, message):
                 chaves_esperadas = ['addr_from', 'addr_to', 'msg_type', 'temp', 'umid', 'gX', 'gY', 'gZ', 'ad_sen_int', 'ad_sen_dec', 'ad_bat_int', 'ad_bat_dec', 'year', 'month', 'day', 'hour', 'minute', 'second']
                 if set(chaves_esperadas) == set(msg.keys()):
                     with app.app_context():
-                        new_data = EspSensor()
+                        new_data = EspTeste()
 
                         new_data.addr_from = msg['addr_from']
                         new_data.addr_to = msg['addr_to']

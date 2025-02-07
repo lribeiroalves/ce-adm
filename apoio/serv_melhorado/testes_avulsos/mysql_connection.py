@@ -12,7 +12,7 @@ def connect_to_database():
     # Estabelece a conexão
     connection = mysql.connector.connect(**config)
 
-    # Cria um cursos para executar comandos SQL
+    # Cria um cursor para executar comandos SQL
     cursor = connection.cursor()
 
     # Executa uma consulta simples
