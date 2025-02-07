@@ -6,6 +6,7 @@ from Clock import Clock
 from MyDht import MyDht
 from Gyroscope import Gyroscope
 from ADC import ADC
+from ResetPin import ResetPin
 
 from machine import UART, Pin
 from time import sleep_ms
@@ -22,15 +23,31 @@ TAMANHO_PACOTE_ENVIO_HORA = 9
 FLAG_FINAL_MENSAGEM = [0xFF] * 3
 
 # Tópicos para publicações MQTT
-topicos_mqtt_pub = ['adm/esp_sala/server/reading',
+topicos_mqtt_pub = ['adm/esp_sala/server/readings_',
                     'adm/esp_sala/server/req_time']
 
 
 # Criação dos pacotes de dados das leituras realizadas por cada sensor
-def criar_pacote(esp:str, clock:Clock = None, adc0:ADC = None, adc1:ADC = None, adc2:ADC = None, adc3:ADC = None, dht:MyDht = None, gyro:Gyroscope = None, occ_pin0:Pin = None, occ_pin1:Pin = None, reset_pin0:Pin = None, reset_pin1:Pin = None):
+def criar_pacote(esp:str, clock:Clock = None, adc0:ADC = None, adc1:ADC = None, adc2:ADC = None, adc3:ADC = None, dht:MyDht = None, gyro:Gyroscope = None, occ_pin0:ResetPin = None, occ_pin1:ResetPin = None, reset_pin0:ResetPin = None, reset_pin1:ResetPin = None):
     if esp == 'sala':
-        # Aguardando definição do hardware
-        return {'raw': [], 'csv': []}
+        time = clock.get_time()
+        # Dados brutos
+        raw_sala = {
+            'addr': ESP_ADDR['sala'],
+            'msg_type': MSG_TYPE['leitura'],
+            'sys1_t_int': adc0.readings[0], 'sys1_t_dec': adc0.readings[1],
+            'sys2_t_int': adc1.readings[0], 'sys2_t_dec': adc1.readings[1],
+            'sys1_c_int': adc2.readings[0], 'sys1_c_dec': adc2.readings[1],
+            'sys2_c_int': adc3.readings[0], 'sys2_c_dec': adc3.readings[1],
+            'occ_t': occ_pin0.readings, 'occ_c': occ_pin1.readings,
+            'reset_t': reset_pin0.readings, 'reset_c': reset_pin1.readings,
+            'year': time['ano'] - 2000, 'month': time['mes'], 'day': time['dia'],
+            'hour': time['hora'], 'minute': time['minuto'], 'second': time['segundo']
+        }
+
+        csv = f"{raw['day']},{raw['month']},{raw['year']},{raw['hour']},{raw['minute']},{raw['second']},{raw_sala['sys1_t_int']},{raw_sala['sys1_t_dec']},{raw_sala['sys1_c_int']},{raw_sala['sys1_c_dec']},{raw_sala['sys2_t_int']},{raw_sala['sys2_t_dec']},{raw_sala['sys2_c_int']},{raw_sala['sys2_c_dec']},{raw_sala['occ_t']},{raw_sala['occ_c']},{raw_sala['reset_t']},{raw_sala['reset_c']}\n"
+
+        return {'raw': raw_sala, 'csv': csv}
 
     elif esp in ['teste', 'controle']:
         time = clock.get_time()
@@ -45,8 +62,10 @@ def criar_pacote(esp:str, clock:Clock = None, adc0:ADC = None, adc1:ADC = None, 
             'year': time['ano'] - 2000, 'month': time['mes'], 'day': time['dia'],
             'hour': time['hora'], 'minute': time['minuto'], 'second': time['segundo']
         }
+
         # mensagem pronta para o datalog
         csv = f"{raw['day']},{raw['month']},{raw['year']},{raw['hour']},{raw['minute']},{raw['second']},{raw['umid']},{raw['temp']},{raw['gX']},{raw['gY']},{raw['gZ']},{raw['ad_sen_int']},{raw['ad_sen_dec']},{raw['ad_bat_int']},{raw['ad_bat_dec']}\n"
+
         # mensagem pronta para transmissão LoRa
         lora_msg = [raw['addr'], ESP_ADDR['sala'], raw['msg_type'], raw['day'], raw['month'], raw['year'], raw['hour'], raw['minute'], raw['second'], raw['umid'], raw['temp'], raw['gX'], raw['gY'], raw['gZ'], raw['ad_sen_int'], raw['ad_sen_dec'], raw['ad_bat_int'], raw['ad_bat_dec']]
         lora_msg += FLAG_FINAL_MENSAGEM + [len(lora_msg)] # Adiciona uma flag de final de mensagem
@@ -143,7 +162,7 @@ def get_lora(buffer: list[bytes], lora:UART = None, mqtt:MQTT = None, clock:Cloc
                 # dados das leituras dos end_points
                 elif len(lora_msg) == TAMANHO_PACOTE_LEITURA and lora_msg[2] == MSG_TYPE['leitura']:
                     readings_to_server = convert_to_dict(lora_msg)
-                    mqtt.publicar_mensagem(topicos_mqtt_pub[0], readings_to_server)
+                    mqtt.publicar_mensagem(f'{topicos_mqtt_pub[0]}{to_esp}', readings_to_server)
                     
             elif lora_msg[1] in [ESP_ADDR['sensor'], ESP_ADDR['controle']]:
                 # Receber definição de horário do esp da sala

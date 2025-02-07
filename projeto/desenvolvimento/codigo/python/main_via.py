@@ -22,45 +22,44 @@ PIN_MISO = 19
 PIN_LORA_RX = 26
 PIN_LORA_TX =  27
 
-# Criar instancias
-dht = MyDht(PIN_DHT)
-gyro = Gyroscope(PIN_SCL, PIN_SDA)
-adc0 = ADC(PIN_SCL, PIN_SDA)
-adc1 = ADC(PIN_SCL, PIN_SDA, canal=1, get_pino=True)
-clock = Clock()
-sd = CardSD(PIN_CS, PIN_SCK, PIN_MOSI, PIN_MISO)
-lora = UART(1, baudrate=4800, tx=PIN_LORA_TX, rx=PIN_LORA_RX)
-            
 
-# Requisição inicial de horário
-atualizar_clock(esp='via', lora=lora, clock=clock)
-
-
-# Criação do arquivo data_logger.txt que armazenará as informações de leituras
-time = clock.get_time()
-logger_path = f'/sd/data_logger/readings/{time["ano"]}_{time["mes"]}_{time["dia"]}_{time["hora"]}_{time["minuto"]}_{time["segundo"]}.csv'
-sd.write_data(logger_path, 'day,month,year,hour,minute,second,umid,temp,gX,gY,gZ,ad_sen_int,ad_sen_dec,ad_bat_int,ad_bat_dec\n', 'w')
+def main(addr):
+    # Criar instancias
+    lora = UART(1, baudrate=4800, tx=PIN_LORA_TX, rx=PIN_LORA_RX)
+    clock = Clock()
+    atualizar_clock(esp='via', lora=lora, clock=clock) # Requisição inicial de horário
+    sd = CardSD(PIN_CS, PIN_SCK, PIN_MOSI, PIN_MISO)
+    dht = MyDht(PIN_DHT, sd=sd, clock=clock)
+    gyro = Gyroscope(PIN_SCL, PIN_SDA, sd=sd, clock=clock)
+    adc0 = ADC(PIN_SCL, PIN_SDA, sd=sd, clock=clock)
+    adc1 = ADC(PIN_SCL, PIN_SDA, canal=1, get_pino=True, sd=sd, clock=clock)
 
 
-# Leitura dos sensores e tratamento dos dados
-while True:
-    if lora.any():
-        sleep_ms(10)
-        buffer = [byte for byte in lora.read()]
-        get_lora(buffer=buffer, lora=lora, clock=clock)
+    # Criação do arquivo data_logger.txt que armazenará as informações de leituras
+    time = clock.get_time()
+    logger_path = f'/sd/data_logger/readings/{time["ano"]}_{time["mes"]}_{time["dia"]}_{time["hora"]}_{time["minuto"]}_{time["segundo"]}.csv'
+    sd.write_data(logger_path, 'day,month,year,hour,minute,second,umid,temp,gX,gY,gZ,ad_sen_int,ad_sen_dec,ad_bat_int,ad_bat_dec\n', 'w')
 
-    dht.update()
-    gyro.update()
-    adc0.update()
-    adc1.update()
-    
-    if [dht.update_enable, gyro.update_enable, adc0.update_enable, adc1.update_enable] == [0] * 4:
-        pacote = criar_pacote(esp='via', clock=clock, adc0=adc0, adc1=adc1, gyro=gyro, dht=dht) # Criar o pacote com as informações
-        sd.write_data(logger_path, pacote['csv'], 'a') # Salvar no SD
-        lora.write(bytes(pacote['lora_msg'])) # Enviar os dados via LoRa
+
+    # Leitura dos sensores e tratamento dos dados
+    while True:
+        if lora.any():
+            sleep_ms(10)
+            buffer = [byte for byte in lora.read()]
+            get_lora(buffer=buffer, lora=lora, clock=clock)
+
+        dht.update()
+        gyro.update()
+        adc0.update()
+        adc1.update()
         
-        # Habilitar novas leituras dos sensores
-        dht.update_enable = True
-        gyro.update_enable = True
-        adc0.update_enable = True
-        adc1.update_enable = True
+        if [dht.update_enable, gyro.update_enable, adc0.update_enable, adc1.update_enable] == [0] * 4:
+            pacote = criar_pacote(esp='via', clock=clock, adc0=adc0, adc1=adc1, gyro=gyro, dht=dht) # Criar o pacote com as informações
+            sd.write_data(logger_path, pacote['csv'], 'a') # Salvar no SD
+            lora.write(bytes(pacote['lora_msg'])) # Enviar os dados via LoRa
+            
+            # Habilitar novas leituras dos sensores
+            dht.update_enable = True
+            gyro.update_enable = True
+            adc0.update_enable = True
+            adc1.update_enable = True

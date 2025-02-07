@@ -1,4 +1,4 @@
-""" Use esse arquivo apenas para chamar o arquivo princiapal para cada ESP """
+""" Use esse arquivo apenas para chamar o arquivo principal para cada ESP """
 
 # from main_sala import main
 from main_via import main
