@@ -20,7 +20,9 @@ mqtt_passwd = 'flask'
 mqtt_topics = [
     'test/server/hello',
     'adm/esp_sala/server/req_time',
-    'adm/esp_sala/server/reading',
+    'adm/esp_sala/server/readings_sala',
+    'adm/esp_sala/server/readings_teste',
+    'adm/esp_sala/server/readings_controle',
     ]
 client_mqtt = mqtt.Client()
 client_mqtt.username_pw_set(mqtt_user, mqtt_passwd)
@@ -68,17 +70,22 @@ def on_message(app, client, userdata, message):
             else:
                 print('Not a Valid JSON Object')
         
-        case 'adm/esp_sala/server/reading':
+        case 'adm/esp_sala/server/readings_teste' | 'adm/esp_sala/server/readings_controle':
             if is_valid_json(msg):
                 msg = json.loads(msg)
-                chaves_esperadas = ['addr_from', 'addr_to', 'msg_type', 'temp', 'umid', 'gX', 'gY', 'gZ', 'ad_sen_int', 'ad_sen_dec', 'ad_bat_int', 'ad_bat_dec', 'year', 'month', 'day', 'hour', 'minute', 'second']
+                chaves_esperadas = ['num_pacote_0', 'num_pacote_1', 'num_pacote_2', 'temp', 'umid', 'gX', 'gY', 'gZ', 'ad_sen_int', 'ad_sen_dec', 'ad_bat_int', 'ad_bat_dec']
                 if set(chaves_esperadas) == set(msg.keys()):
-                    with app.app_context():
-                        new_data = EspTeste()
+                    # Converter os bytes de numeração do pacote
+                    num_pacote = bytes([msg['num_pacote_0'], msg['num_pacote_1'], msg['num_pacote_2']])
+                    num_pacote = int.from_bytes(num_pacote)
 
-                        new_data.addr_from = msg['addr_from']
-                        new_data.addr_to = msg['addr_to']
-                        new_data.msg_type = msg['msg_type']
+                    with app.app_context():
+                        if topic.split('/')[-1] == 'readings_teste':
+                            new_data = EspTeste()
+                        else:
+                            new_data = EspControle()
+
+                        new_data.num_pacote = num_pacote
                         new_data.temp = msg['temp']
                         new_data.umid = msg['umid']
                         new_data.gX = msg['gX']
@@ -88,12 +95,43 @@ def on_message(app, client, userdata, message):
                         new_data.ad_sen_dec = msg['ad_sen_dec']
                         new_data.ad_bat_int = msg['ad_bat_int']
                         new_data.ad_bat_dec = msg['ad_bat_dec']
-                        new_data.year = msg['year']
-                        new_data.month = msg['month']
-                        new_data.day = msg['day']
-                        new_data.hour = msg['hour']
-                        new_data.minute = msg['minute']
-                        new_data.second = msg['second']
+                        new_data.date = datetime.datetime.now()
+                        
+                        db.session.add(new_data)
+                        db.session.commit()
+                else:
+                    print('A Mensagem recebida não está no padrão esperado.')
+            else:
+                print('Not a valid JSON')
+
+        case 'adm/esp_sala/server/readings_sala':
+            if is_valid_json(msg):
+                msg = json.loads(msg)
+                chaves_esperadas = ['num_pacote_0','num_pacote_1','num_pacote_2','sys1_t_int','sys1_t_dec','sys2_t_int','sys2_t_dec','sys1_c_int','sys1_c_dec','sys2_c_int','sys2_c_dec','occ_t','occ_c','reset_t','reset_c']
+                if set(chaves_esperadas) == set(msg.keys()):
+                    # Converter os bytes de numeração do pacote
+                    num_pacote = bytes([msg['num_pacote_0'], msg['num_pacote_1'], msg['num_pacote_2']])
+                    num_pacote = int.from_bytes(num_pacote)
+
+                    with app.app_context():
+                        new_data = EspSala()
+
+                        new_data.num_pacote = num_pacote
+                        new_data.num_pacote_0 = msg['num_pacote_0']
+                        new_data.num_pacote_1 = msg['num_pacote_1']
+                        new_data.num_pacote_2 = msg['num_pacote_2']
+                        new_data.sys1_t_int = msg['sys1_t_int']
+                        new_data.sys1_t_dec = msg['sys1_t_dec']
+                        new_data.sys2_t_int = msg['sys2_t_int']
+                        new_data.sys2_t_dec = msg['sys2_t_dec']
+                        new_data.sys1_c_int = msg['sys1_c_int']
+                        new_data.sys1_c_dec = msg['sys1_c_dec']
+                        new_data.sys2_c_int = msg['sys2_c_int']
+                        new_data.sys2_c_dec = msg['sys2_c_dec']
+                        new_data.occ_t = msg['occ_t']
+                        new_data.occ_c = msg['occ_c']
+                        new_data.reset_t = msg['reset_t']
+                        new_data.reset_c = msg['reset_c']
                         new_data.date = datetime.datetime.now()
                         
                         db.session.add(new_data)

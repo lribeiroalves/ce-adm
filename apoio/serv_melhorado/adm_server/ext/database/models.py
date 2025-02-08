@@ -23,16 +23,10 @@ class Readings(db.Model):
 class BaseModel():
     """ Modelo base para todas as tabelas """
     id:Mapped[int] = mapped_column(primary_key=True)
-    year:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
-    month:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
-    day:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
-    hour:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
-    minute:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
-    second:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
-    date:Mapped[DateTime] = mapped_column(DateTime(timezone=True), nullable=False, unique=False)
+    num_pacote:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(id = {self.id}'
+        return f'{self.__class__.__name__}(id = {self.id, self.num_pacote}'
 
 
 class EspViaBase(db.Model, BaseModel):
@@ -51,6 +45,7 @@ class EspViaBase(db.Model, BaseModel):
     def to_dict(self):
         return {
             'id': self.id,
+            'num_pacote': self.num_pacote,
             'temp': self.temp,
             'umid': self.umid,
             'gX': self.gX,
@@ -60,12 +55,6 @@ class EspViaBase(db.Model, BaseModel):
             'ad_sen_int': self.ad_sen_int,
             'ad_bat_dec': self.ad_bat_dec,
             'ad_bat_int': self.ad_bat_int,
-            'year': self.year,
-            'month': self.month,
-            'day': self.day,
-            'hour': self.hour,
-            'minute': self.minute,
-            'second': self.second,
             'date': self.date,
         }
 
@@ -80,22 +69,23 @@ class EspControle(EspViaBase):
 
 class EspSala(db.Model, BaseModel):
     """ Modelo para a tabela de dados do ESP da sala """
-    sys1_teste_int:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
-    sys1_teste_dec:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
-    sys2_teste_int:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
-    sys2_teste_dec:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
-    sys1_controle_int:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
-    sys1_controle_dec:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
-    sys2_controle_int:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
-    sys2_controle_dec:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
-    occ_teste:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
-    occ_controle:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
-    reset_teste:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
-    reset_controle:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
+    sys1_t_int:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
+    sys1_t_dec:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
+    sys2_t_int:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
+    sys2_t_dec:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
+    sys1_c_int:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
+    sys1_c_dec:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
+    sys2_c_int:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
+    sys2_c_dec:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
+    occ_t:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
+    occ_c:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
+    reset_t:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
+    reset_c:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
 
     def to_dict(self):
         return {
             'id': self.id,
+            'num_pacote': self.num_pacote,
             'sys1_teste_int': self.sys1_teste_int,
             'sys1_teste_dec': self.sys1_teste_dec,
             'sys2_teste_int': self.sys2_teste_int,
@@ -108,11 +98,5 @@ class EspSala(db.Model, BaseModel):
             'occ_controle': self.occ_controle,
             'reset_teste': self.reset_teste,
             'reset_controle': self.reset_controle,
-            'year': self.year,
-            'month': self.month,
-            'day': self.day,
-            'hour': self.hour,
-            'minute': self.minute,
-            'second': self.second,
             'date': self.date,
         }

@@ -22,9 +22,34 @@ TAMANHO_PACOTE_REQUIS_HORA = 4
 TAMANHO_PACOTE_ENVIO_HORA = 9
 FLAG_FINAL_MENSAGEM = [0xFF] * 3
 
+# Bytes de contagem dos pacotes MQTT
+num_pacote = {
+    ESP_ADDR['teste']: [0x00, 0x00, 0x00],
+    ESP_ADDR['controle']: [0x00, 0x00, 0x00],
+    ESP_ADDR['sala']: [0x00, 0x00, 0x00],
+}
+
 # Tópicos para publicações MQTT
 topicos_mqtt_pub = ['adm/esp_sala/server/readings_',
                     'adm/esp_sala/server/req_time']
+
+
+def contagem_pacotes(addr:bytes) -> list[bytes, bytes, bytes]:
+    """ Função para fazer a contagem dos pacotes enviados via MQTT """
+    if num_pacote[addr][2] < 0xFF:
+        num_pacote[addr][2] += 1
+    else:
+        num_pacote[addr][2] = 0
+        if num_pacote[addr][1] < 0xFF:
+            num_pacote[addr][1] += 1
+        else:
+            num_pacote[addr][1] = 0
+            if num_pacote[addr][0] < 0xFF:
+                num_pacote[addr][0] += 1
+            else:
+                num_pacote[addr][0] = 0
+    
+    return num_pacote[addr]
 
 
 # Criação dos pacotes de dados das leituras realizadas por cada sensor
@@ -44,10 +69,19 @@ def criar_pacote(esp:str, clock:Clock = None, adc0:ADC = None, adc1:ADC = None, 
             'year': time['ano'] - 2000, 'month': time['mes'], 'day': time['dia'],
             'hour': time['hora'], 'minute': time['minuto'], 'second': time['segundo']
         }
+        
+        # Mensagem via MQTT
+        pack_counter = contagem_pacotes(ESP_ADDR['sala']) # Contagem dos pacotes
+        excluir_chaves = ['addr', 'msg_type', 'year', 'month', 'day', 'hour', 'minute', 'second']
+        mqtt_msg = {chave: valor for chave, valor in raw_sala.items() if chave not in excluir_chaves}
+        mqtt_msg['num_pacote_0'] = pack_counter[0]
+        mqtt_msg['num_pacote_1'] = pack_counter[1]
+        mqtt_msg['num_pacote_2'] = pack_counter[2]
 
+        # mensagem pronta para o datalog
         csv = f"{raw['day']},{raw['month']},{raw['year']},{raw['hour']},{raw['minute']},{raw['second']},{raw_sala['sys1_t_int']},{raw_sala['sys1_t_dec']},{raw_sala['sys1_c_int']},{raw_sala['sys1_c_dec']},{raw_sala['sys2_t_int']},{raw_sala['sys2_t_dec']},{raw_sala['sys2_c_int']},{raw_sala['sys2_c_dec']},{raw_sala['occ_t']},{raw_sala['occ_c']},{raw_sala['reset_t']},{raw_sala['reset_c']}\n"
 
-        return {'raw': raw_sala, 'csv': csv}
+        return {'raw': raw_sala, 'csv': csv, 'mqtt_msg': mqtt_msg}
 
     elif esp in ['teste', 'controle']:
         time = clock.get_time()
@@ -102,15 +136,13 @@ def get_mqtt(topic_coded:bytes, msg_coded:bytes, clock:Clock = None):
 
 # Função para criar o dicionário dos dados de leituras dos end-points para enviar o broker MQTT
 def convert_to_dict(buffer:list[bytes]):
+    pack_counter = contagem_pacotes(buffer[0])
     dic = {
-        'addr': buffer[0],
-        'msg_type': buffer[2],
         'ad_sen_int': buffer[14], 'ad_sen_dec': buffer[15],
         'ad_bat_int': buffer[16], 'ad_bat_dec': buffer[17],
         'temp': buffer[10], 'umid': buffer[9],
         'gX': buffer[11], 'gY': buffer[12], 'gZ': buffer[13],
-        'year': buffer[5], 'month': buffer[4], 'day': buffer[3],
-        'hour': buffer[6], 'minute': buffer[7], 'second': buffer[8]
+        'num_pacote_0': pack_counter[0], 'num_pacote_1': pack_counter[1], 'num_pacote_2': pack_counter[2],
     }
     return dic
 
@@ -164,7 +196,7 @@ def get_lora(buffer: list[bytes], lora:UART = None, mqtt:MQTT = None, clock:Cloc
                     readings_to_server = convert_to_dict(lora_msg)
                     mqtt.publicar_mensagem(f'{topicos_mqtt_pub[0]}{to_esp}', readings_to_server)
                     
-            elif lora_msg[1] in [ESP_ADDR['sensor'], ESP_ADDR['controle']]:
+            elif lora_msg[1] in [ESP_ADDR['teste'], ESP_ADDR['controle']]:
                 # Receber definição de horário do esp da sala
                 if len(lora_msg) == TAMANHO_PACOTE_ENVIO_HORA and lora_msg[2] == MSG_TYPE['clock_set']:
                     try:

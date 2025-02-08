@@ -17,6 +17,10 @@ class WIFI:
         self.__on_fail_conn = on_fail_conn
         self.__wifi = network.WLAN(network.STA_IF)
     
+    @property
+    def isconnected(self):
+        return self.__wifi.isconnected()
+    
     def conectar(self):
         """ Ligar a interface Wifi e conectar a uma rede """
         if not self.__wifi.active():

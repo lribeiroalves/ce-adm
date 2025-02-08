@@ -102,6 +102,7 @@ class MQTT:
             self.__client.publish(topic=topic, msg=json_msg, retain=False, qos=0)
         else:
             print('Cliente não está conectado ao broker MQTT')
+            self.conectar()
     
     
     def chk_msg(self, wait_msg: bool = False):
