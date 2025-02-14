@@ -19,8 +19,8 @@ PIN_CS = 5
 PIN_SCK = 18
 PIN_MOSI = 23
 PIN_MISO = 19
-PIN_LORA_RX = 26
-PIN_LORA_TX =  27
+PIN_LORA_RX = 27
+PIN_LORA_TX =  26
 
 
 def main(addr):
@@ -31,8 +31,8 @@ def main(addr):
     sd = CardSD(PIN_CS, PIN_SCK, PIN_MOSI, PIN_MISO)
     dht = MyDht(PIN_DHT, sd=sd, clock=clock)
     gyro = Gyroscope(PIN_SCL, PIN_SDA, sd=sd, clock=clock)
-    adc0 = ADC(PIN_SCL, PIN_SDA, sd=sd, clock=clock)
-    adc1 = ADC(PIN_SCL, PIN_SDA, canal=1, get_pino=True, sd=sd, clock=clock)
+    adc0 = ADC(PIN_SCL, PIN_SDA, canal=0, sd=sd, clock=clock)
+    adc1 = ADC(PIN_SCL, PIN_SDA, canal=1, sd=sd, clock=clock)
 
 
     # Criação do arquivo data_logger.txt que armazenará as informações de leituras

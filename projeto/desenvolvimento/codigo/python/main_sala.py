@@ -12,18 +12,18 @@ from ResetPin import ResetPin
 from funcoes_ajuda import atualizar_clock, get_lora, get_mqtt, criar_pacote
 
 # PINOUT
-PIN_LORA_RX = 23
-PIN_LORA_TX = 22
+PIN_LORA_RX = 2
+PIN_LORA_TX = 4
 PIN_CS = 5
 PIN_SCK = 18
 PIN_MOSI = 23
 PIN_MISO = 19
 PIN_SCL = 22
 PIN_SDA = 21
-PIN_SENSOR_RESET = 36
-PIN_SENSOR_OCC = 39
-PIN_CONTROLE_RESET = 34
-PIN_CONTROLE_OCC = 35
+PIN_SENSOR_RESET = 25
+PIN_SENSOR_OCC = 26
+PIN_CONTROLE_RESET = 27
+PIN_CONTROLE_OCC = 33
 
 # # Endereçamento e tipos de mensagem
 # ESP_ADDR = {'teste': 0x01, 'controle': 0x02, 'sala': 0x03}

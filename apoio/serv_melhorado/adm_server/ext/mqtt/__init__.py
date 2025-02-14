@@ -64,7 +64,7 @@ def on_message(app, client, userdata, message):
                         'second': time.second
                     }
                     msg_json = json.dumps(msg)
-                    client_mqtt.publish('adm/server/esp_sala', msg_json)
+                    client_mqtt.publish('adm/server/esp_sala/clock', msg_json)
                 else:
                     print('Parâmetros inválidos.')
             else:

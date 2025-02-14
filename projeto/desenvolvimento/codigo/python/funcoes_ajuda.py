@@ -118,6 +118,7 @@ def get_mqtt(topic_coded:bytes, msg_coded:bytes, clock:Clock = None):
     controle_topics = 'adm/server/esp_controle'
 
     # mensagens direcionadas para o esp da sala
+    print(topic)
     if topic == f'{sala_topics}/clock':
         new_time = ujson.loads(msg)
         try:
