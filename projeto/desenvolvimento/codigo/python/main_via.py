@@ -25,7 +25,7 @@ PIN_LORA_TX =  26
 
 def main(addr):
     # Criar instancias
-    lora = UART(1, baudrate=4800, tx=PIN_LORA_TX, rx=PIN_LORA_RX)
+    lora = UART(1, baudrate=115200, tx=PIN_LORA_TX, rx=PIN_LORA_RX)
     clock = Clock()
     atualizar_clock(esp='via', lora=lora, clock=clock) # Requisição inicial de horário
     sd = CardSD(PIN_CS, PIN_SCK, PIN_MOSI, PIN_MISO)
@@ -46,6 +46,7 @@ def main(addr):
         if lora.any():
             sleep_ms(10)
             buffer = [byte for byte in lora.read()]
+            print(buffer)
             get_lora(buffer=buffer, lora=lora, clock=clock)
 
         dht.update()
@@ -54,7 +55,7 @@ def main(addr):
         adc1.update()
         
         if [dht.update_enable, gyro.update_enable, adc0.update_enable, adc1.update_enable] == [0] * 4:
-            pacote = criar_pacote(esp='via', clock=clock, adc0=adc0, adc1=adc1, gyro=gyro, dht=dht) # Criar o pacote com as informações
+            pacote = criar_pacote(esp='teste', clock=clock, adc0=adc0, adc1=adc1, gyro=gyro, dht=dht) # Criar o pacote com as informações
             sd.write_data(logger_path, pacote['csv'], 'a') # Salvar no SD
             lora.write(bytes(pacote['lora_msg'])) # Enviar os dados via LoRa
             

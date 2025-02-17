@@ -183,11 +183,11 @@ def get_lora(buffer: list[bytes], lora:UART = None, mqtt:MQTT = None, clock:Cloc
             
             # Verificação do destinatário da mensagem no header
             if lora_msg[1] == ESP_ADDR['sala']:
+                to_esp = 'teste' if lora_msg[0] == ESP_ADDR['teste'] else 'controle' # Direciona a resposta da mensagem a quem fez a requisição
                 # requisição de horário
                 if len(lora_msg) == 4 and lora_msg[2] == MSG_TYPE['clock_get']:
-                    to_esp = 'teste' if lora_msg[0] == ESP_ADDR['teste'] else 'controle' # Direciona a resposta da mensagem a quem fez a requisição
                     now = clock.get_time()
-                    time_set_msg = [ESP_ADDR['sala'], ESP_ADDR[to_esp], MSG_TYPE['clock_set'], now['ano']-2000, now['mes'], now['dia'], now['hora'], now['minuto'], now['segundo']]
+                    time_set_msg = [ESP_ADDR['sala'], ESP_ADDR[to_esp], MSG_TYPE['clock_set'], now['ano']-2000, now['mes'], now['dia'], now['hora'], now['minuto'], now['segundo'], 0xFF, 0xFF, 0xFF, 0x09]
                     for byte in calcular_crc16(time_set_msg)[0:2]:
                         time_set_msg.append(byte)
                     lora.write(bytes(time_set_msg))
@@ -195,6 +195,9 @@ def get_lora(buffer: list[bytes], lora:UART = None, mqtt:MQTT = None, clock:Cloc
                 # dados das leituras dos end_points
                 elif len(lora_msg) == TAMANHO_PACOTE_LEITURA and lora_msg[2] == MSG_TYPE['leitura']:
                     readings_to_server = convert_to_dict(lora_msg)
+                    print(topicos_mqtt_pub[0])
+                    print(to_esp)
+                    print(readings_to_server)
                     mqtt.publicar_mensagem(f'{topicos_mqtt_pub[0]}{to_esp}', readings_to_server)
                     
             elif lora_msg[1] in [ESP_ADDR['teste'], ESP_ADDR['controle']]:

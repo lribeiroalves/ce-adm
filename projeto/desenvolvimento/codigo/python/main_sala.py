@@ -38,7 +38,7 @@ WIFI_PSWD = 'SCAOnline'
 # WIFI_PSWD = 'tbtt6469'
 # WIFI_PSWD = '244466666'
 # WIFI_PSWD = '194267140'
-BROKER_ADRR = '192.168.0.112'
+BROKER_ADRR = '192.168.0.107'
 BROKER_PORT = 1883
 MQTT_USER = 'esp32'
 MQTT_PSWD = 'esp32'
@@ -55,7 +55,7 @@ def main(addr):
     wifi.conectar()
     mqtt_client.conectar()
     topico_pub = ['adm/esp_sala/server/reading', 'adm/esp_sala/server/req_time']
-    topico_sub = ['adm/server/esp_sala']
+    topico_sub = ['adm/server/esp_sala', 'adm/server/esp_sala/clock']
     mqtt_client.assinar_topicos(topico_sub)
     mqtt_client.definir_cb(cb_func=get_mqtt, clock=clock)
 
