@@ -46,7 +46,6 @@ def main(addr):
         if lora.any():
             sleep_ms(10)
             buffer = [byte for byte in lora.read()]
-            print(buffer)
             get_lora(buffer=buffer, lora=lora, clock=clock)
 
         dht.update()

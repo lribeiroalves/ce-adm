@@ -103,7 +103,7 @@ def main(addr):
             # Salvar no SD
             sd.write_data(logger_path,pacote['csv'],'a')
             # Enviar via MQTT
-            mqtt_client.publicar_mensagem('adm/esp_sala/server/readings_sala', pacote['raw'])
+            mqtt_client.publicar_mensagem('adm/esp_sala/server/readings_sala', pacote['mqtt_msg'])
 
             # Habilitar novas leituras
             adc0.update_enable = True

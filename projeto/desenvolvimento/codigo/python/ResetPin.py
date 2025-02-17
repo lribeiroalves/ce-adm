@@ -59,8 +59,22 @@ class ResetPin:
         current_time = ticks_ms()
 
         if current_time >= self.__previous_time + self.__read_time and self.__update_enable:
+            self.__previous_time = current_time
             if self.__count_readings < N_LEITURAS:
                 self.__read()
+                self.__count_readings += 1
             else:
                 self.__count_readings = 0
                 self.__update_enable = False
+
+
+
+if __name__ == '__main__':
+    pin = ResetPin(33)
+    
+    while True:
+        pin.update()
+        
+        if not pin.update_enable:
+            print('OK')
+            pin.update_enable = True

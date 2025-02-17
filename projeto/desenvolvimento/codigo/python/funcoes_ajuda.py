@@ -79,7 +79,7 @@ def criar_pacote(esp:str, clock:Clock = None, adc0:ADC = None, adc1:ADC = None, 
         mqtt_msg['num_pacote_2'] = pack_counter[2]
 
         # mensagem pronta para o datalog
-        csv = f"{raw['day']},{raw['month']},{raw['year']},{raw['hour']},{raw['minute']},{raw['second']},{raw_sala['sys1_t_int']},{raw_sala['sys1_t_dec']},{raw_sala['sys1_c_int']},{raw_sala['sys1_c_dec']},{raw_sala['sys2_t_int']},{raw_sala['sys2_t_dec']},{raw_sala['sys2_c_int']},{raw_sala['sys2_c_dec']},{raw_sala['occ_t']},{raw_sala['occ_c']},{raw_sala['reset_t']},{raw_sala['reset_c']}\n"
+        csv = f"{raw_sala['day']},{raw_sala['month']},{raw_sala['year']},{raw_sala['hour']},{raw_sala['minute']},{raw_sala['second']},{raw_sala['sys1_t_int']},{raw_sala['sys1_t_dec']},{raw_sala['sys1_c_int']},{raw_sala['sys1_c_dec']},{raw_sala['sys2_t_int']},{raw_sala['sys2_t_dec']},{raw_sala['sys2_c_int']},{raw_sala['sys2_c_dec']},{raw_sala['occ_t']},{raw_sala['occ_c']},{raw_sala['reset_t']},{raw_sala['reset_c']}\n"
 
         return {'raw': raw_sala, 'csv': csv, 'mqtt_msg': mqtt_msg}
 
@@ -195,9 +195,6 @@ def get_lora(buffer: list[bytes], lora:UART = None, mqtt:MQTT = None, clock:Cloc
                 # dados das leituras dos end_points
                 elif len(lora_msg) == TAMANHO_PACOTE_LEITURA and lora_msg[2] == MSG_TYPE['leitura']:
                     readings_to_server = convert_to_dict(lora_msg)
-                    print(topicos_mqtt_pub[0])
-                    print(to_esp)
-                    print(readings_to_server)
                     mqtt.publicar_mensagem(f'{topicos_mqtt_pub[0]}{to_esp}', readings_to_server)
                     
             elif lora_msg[1] in [ESP_ADDR['teste'], ESP_ADDR['controle']]:
