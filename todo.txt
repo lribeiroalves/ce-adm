@@ -1,0 +1,2 @@
+- Tentar registrar leituras individuais em atributos das classes e escrever no sd apenas uma vez
+- Voltar a enviar a data para o broker mqtt e tratar no servidor para o formato datetime para ser usado no grafana
