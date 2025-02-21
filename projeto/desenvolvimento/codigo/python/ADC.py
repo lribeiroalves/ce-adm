@@ -363,7 +363,7 @@ from Clock import Clock
 from CardSD import CardSD
 
 ADS1115_ADDRESS = 0x48
-N_LEITURAS = 10
+N_LEITURAS = 7
 
 
 class ADC:
@@ -381,11 +381,12 @@ class ADC:
         self.__update_enable = True
         self.__count_readings = 0
         self.__clock = clock
+        self.__csv_text = ''
         self.__sd = sd
         if self.__sd and self.__clock: # Create Data logger
             time = self.__clock.get_time()
             self.__log_path = f'/sd/data_logger/adc/canal{self.__canal}/{time["ano"]}_{time["mes"]}_{time["dia"]}_{time["hora"]}_{time["minuto"]}_{time["segundo"]}.csv'
-            self.__sd.write_data(self.__log_path, 'tensao,year,month,day,hour,minute,second,mili_second\n', 'w')
+#             self.__sd.write_data(self.__log_path, 'tensao,year,month,day,hour,minute,second,mili_second\n', 'w')
     
     @property
     def readings(self):
@@ -404,6 +405,8 @@ class ADC:
         if flag == True:
             self.__update_enable = True
             self.__readings = [0,0]
+#             self.__sd.write_data(self.__log_path, self.__csv_text, 'a')
+#             self.__csv_text = ''
         else:
             raise ValueError('Esse atributo só pode ser alterado para verdadeiro.')
     
@@ -429,7 +432,7 @@ class ADC:
         if self.__clock and self.__sd:
             time = self.__clock.get_time()
             v = leitura_V if retorna_pino else leitura_convertida
-            self.__sd.write_data(self.__log_path, f'{v},{time["ano"]},{time["mes"]},{time["dia"]},{time["hora"]},{time["minuto"]},{time["segundo"]},{time["m_seg"]}\n', 'a')
+#             self.__csv_text += f'{v},{time["ano"]},{time["mes"]},{time["dia"]},{time["hora"]},{time["minuto"]},{time["segundo"]},{time["m_seg"]}\n'
         
         return leitura_V if retorna_pino else leitura_convertida
     

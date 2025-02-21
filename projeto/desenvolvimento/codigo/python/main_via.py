@@ -1,5 +1,5 @@
 from machine import UART
-from time import sleep_ms
+from time import sleep_ms, ticks_ms
 
 from CRC16 import *
 from WIFI import WIFI
@@ -40,7 +40,9 @@ def main(addr):
     logger_path = f'/sd/data_logger/readings/{time["ano"]}_{time["mes"]}_{time["dia"]}_{time["hora"]}_{time["minuto"]}_{time["segundo"]}.csv'
     sd.write_data(logger_path, 'day,month,year,hour,minute,second,umid,temp,gX,gY,gZ,ad_sen_int,ad_sen_dec,ad_bat_int,ad_bat_dec\n', 'w')
 
-
+    
+    tempo_ini = 0
+    tempo_fim = 0
     # Leitura dos sensores e tratamento dos dados
     while True:
         if lora.any():
@@ -56,7 +58,10 @@ def main(addr):
         if [dht.update_enable, gyro.update_enable, adc0.update_enable, adc1.update_enable] == [0] * 4:
             pacote = criar_pacote(esp='teste', clock=clock, adc0=adc0, adc1=adc1, gyro=gyro, dht=dht) # Criar o pacote com as informações
             sd.write_data(logger_path, pacote['csv'], 'a') # Salvar no SD
+            tempo_fim = ticks_ms()
             lora.write(bytes(pacote['lora_msg'])) # Enviar os dados via LoRa
+            print(f'Tempo: {(tempo_fim - tempo_ini) / 1000:.2f} segundos')
+            tempo_ini = ticks_ms()
             
             # Habilitar novas leituras dos sensores
             dht.update_enable = True
