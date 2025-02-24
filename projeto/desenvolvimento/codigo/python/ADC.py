@@ -381,13 +381,14 @@ class ADC:
         self.__update_enable = True
         self.__count_readings = 0
         self.__clock = clock
-        self.__csv_text = ''
+        self.__csv = ''
         self.__sd = sd
-        if self.__sd and self.__clock: # Create Data logger
-            time = self.__clock.get_time()
-            self.__log_path = f'/sd/data_logger/adc/canal{self.__canal}/{time["ano"]}_{time["mes"]}_{time["dia"]}_{time["hora"]}_{time["minuto"]}_{time["segundo"]}.csv'
-#             self.__sd.write_data(self.__log_path, 'tensao,year,month,day,hour,minute,second,mili_second\n', 'w')
+        # if self.__sd and self.__clock: # Create Data logger
+        #     time = self.__clock.get_time()
+        #     self.__log_path = f'/sd/data_logger/adc/canal{self.__canal}/{time["ano"]}_{time["mes"]}_{time["dia"]}_{time["hora"]}_{time["minuto"]}_{time["segundo"]}.csv'
+        #     self.__sd.write_data(self.__log_path, 'tensao,year,month,day,hour,minute,second,mili_second\n', 'w')
     
+
     @property
     def readings(self):
         for v in self.__readings:
@@ -395,6 +396,12 @@ class ADC:
         
         return self.__readings
     
+
+    @property
+    def csv(self):
+        return self.__csv
+
+
     @property
     def update_enable(self):
         return self.__update_enable
@@ -405,16 +412,18 @@ class ADC:
         if flag == True:
             self.__update_enable = True
             self.__readings = [0,0]
-#             self.__sd.write_data(self.__log_path, self.__csv_text, 'a')
-#             self.__csv_text = ''
+            self.__csv = ''
+#             self.__sd.write_data(self.__log_path, self.__csv, 'a')
         else:
             raise ValueError('Esse atributo só pode ser alterado para verdadeiro.')
     
+
     def __config(self):
         """ Configurações iniciais do sensor """
         self.__adc.setVoltageRange_mV(ADS1115_RANGE_6144) # Define o range de leitura de 0 a 6,144V
         self.__adc.setMeasureMode(ADS1115_SINGLE) # Define que as medições serão realizadas em single shot
     
+
     def __leitura(self, retorna_pino: bool = False):
         """ Leitura única do sensor em mV """
         fator_conversao = 7.946 # Fator de conversão para uso do divisor de tensão
@@ -432,10 +441,11 @@ class ADC:
         if self.__clock and self.__sd:
             time = self.__clock.get_time()
             v = leitura_V if retorna_pino else leitura_convertida
-#             self.__csv_text += f'{v},{time["ano"]},{time["mes"]},{time["dia"]},{time["hora"]},{time["minuto"]},{time["segundo"]},{time["m_seg"]}\n'
+            self.__csv += f'adc_{self.__canal},{v},0,0,{time["ano"]},{time["mes"]},{time["dia"]},{time["hora"]},{time["minuto"]},{time["segundo"]},{time["m_seg"]}\n'
         
         return leitura_V if retorna_pino else leitura_convertida
     
+
     def update(self):
         """ Realiza as medições e calcula a média """
         current_time = ticks_ms()
@@ -479,10 +489,3 @@ if __name__ == '__main__':
             print(f'Pino2: {pino2} V')
             adc2.update_enable = True
     
-    
-    
-    
-    
-    
-    
-                 

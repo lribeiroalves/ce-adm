@@ -9,8 +9,9 @@ N_LEITURAS = 10
 class ResetPin:
     """ Classe que implementa a leitura automática de um pino ligado ao sinal de Reset dos SDDs """
 
-    def __init__(self, pin:int, time_ms:int = 100, sd:CardSD = None, clock:Clock = None):
+    def __init__(self, pin:int, name:str, time_ms:int = 100, sd:CardSD = None, clock:Clock = None):
         self.__pin = Pin(pin)
+        self.__name = name
         self.__read_time = time_ms
         self.__previous_time = 0
         self.__readings = 0
@@ -18,15 +19,21 @@ class ResetPin:
         self.__count_readings = 0
         self.__clock = clock
         self.__sd = sd
-        if self.__sd and self.__clock: # Create Data logger
-            time = self.__clock.get_time()
-            self.__log_path = f'/sd/data_logger/reset/pin_{pin}/{time["ano"]}_{time["mes"]}_{time["dia"]}_{time["hora"]}_{time["minuto"]}_{time["segundo"]}.csv'
-            self.__sd.write_data(self.__log_path, 'pin_state,year,month,day,hour,minute,second,mili_second\n', 'w')
+        self.__csv = ''
+        # if self.__sd and self.__clock: # Create Data logger
+        #     time = self.__clock.get_time()
+        #     self.__log_path = f'/sd/data_logger/reset/pin_{pin}/{time["ano"]}_{time["mes"]}_{time["dia"]}_{time["hora"]}_{time["minuto"]}_{time["segundo"]}.csv'
+        #     self.__sd.write_data(self.__log_path, 'pin_state,year,month,day,hour,minute,second,mili_second\n', 'w')
         
 
     @property
     def readings(self):
         return self.__readings
+    
+
+    @property
+    def csv(self):
+        return self.__csv
     
     
     @property
@@ -39,6 +46,7 @@ class ResetPin:
         if flag == True:
             self.__update_enable = True
             self.__readings = 0
+            self.__csv = ''
         else:
             raise ValueError('Esse atributo só pode ser alterado para verdadeiro.')
 
@@ -49,7 +57,8 @@ class ResetPin:
 
         if self.__clock and self.__sd:
             time = self.__clock.get_time()
-            self.__sd.write_data(self.__log_path, f'{pin_state},{time["ano"]},{time["mes"]},{time["dia"]},{time["hora"]},{time["minuto"]},{time["segundo"]},{time["m_seg"]}\n', 'a')
+            self.__csv += f'{self.__name},{pin_state},0,0,{time["ano"]},{time["mes"]},{time["dia"]},{time["hora"]},{time["minuto"]},{time["segundo"]},{time["m_seg"]}\n'
+            # self.__sd.write_data(self.__log_path, f'{pin_state},{time["ano"]},{time["mes"]},{time["dia"]},{time["hora"]},{time["minuto"]},{time["segundo"]},{time["m_seg"]}\n', 'a')
         
         self.__readings = pin_state if not self.__readings else 1
 

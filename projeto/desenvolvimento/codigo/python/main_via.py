@@ -37,8 +37,10 @@ def main(addr):
 
     # Criação do arquivo data_logger.txt que armazenará as informações de leituras
     time = clock.get_time()
-    logger_path = f'/sd/data_logger/readings/{time["ano"]}_{time["mes"]}_{time["dia"]}_{time["hora"]}_{time["minuto"]}_{time["segundo"]}.csv'
-    sd.write_data(logger_path, 'day,month,year,hour,minute,second,umid,temp,gX,gY,gZ,ad_sen_int,ad_sen_dec,ad_bat_int,ad_bat_dec\n', 'w')
+    logger_messages_path = f'/sd/data_logger/messages/{time["ano"]}_{time["mes"]}_{time["dia"]}_{time["hora"]}_{time["minuto"]}_{time["segundo"]}.csv'
+    logger_readings_path = f'/sd/data_logger/readings/{time["ano"]}_{time["mes"]}_{time["dia"]}_{time["hora"]}_{time["minuto"]}_{time["segundo"]}.csv'
+    sd.write_data(logger_messages_path, 'day,month,year,hour,minute,second,umid,temp,gX,gY,gZ,ad_sen_int,ad_sen_dec,ad_bat_int,ad_bat_dec\n', 'w')
+    sd.write_data(logger_readings_path, 'name,read_0,read_1,read_2,year,month,day,hour,minute,second,m_sec\n', 'w')
 
     
     tempo_ini = 0
@@ -56,10 +58,19 @@ def main(addr):
         adc1.update()
         
         if [dht.update_enable, gyro.update_enable, adc0.update_enable, adc1.update_enable] == [0] * 4:
-            pacote = criar_pacote(esp='teste', clock=clock, adc0=adc0, adc1=adc1, gyro=gyro, dht=dht) # Criar o pacote com as informações
-            sd.write_data(logger_path, pacote['csv'], 'a') # Salvar no SD
-            tempo_fim = ticks_ms()
+            # Criar o pacote com as informações
+            pacote = criar_pacote(esp='teste', clock=clock, adc0=adc0, adc1=adc1, gyro=gyro, dht=dht)
+
+            # Salvar no SD
+            sd.write_data(logger_messages_path, pacote['csv'], 'a')
+            readings_csv = ''
+            for object in [dht, gyro, adc0, adc1]:
+                readings_csv += object.csv
+            sd.write_data(logger_readings_path, readings_csv, 'a')
+
             lora.write(bytes(pacote['lora_msg'])) # Enviar os dados via LoRa
+            
+            tempo_fim = ticks_ms()
             print(f'Tempo: {(tempo_fim - tempo_ini) / 1000:.2f} segundos')
             tempo_ini = ticks_ms()
             

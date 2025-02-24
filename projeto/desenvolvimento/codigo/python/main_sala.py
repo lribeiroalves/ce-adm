@@ -68,16 +68,18 @@ def main(addr):
     adc1 = ADC(PIN_SCL, PIN_SDA, canal = 1, get_pino = True, sd=sd, clock=clock)
     adc2 = ADC(PIN_SCL, PIN_SDA, canal = 2, get_pino = True, sd=sd, clock=clock)
     adc3 = ADC(PIN_SCL, PIN_SDA, canal = 3, get_pino = True, sd=sd, clock=clock)
-    occ_sensor = ResetPin(PIN_SENSOR_OCC, sd=sd, clock=clock)
-    occ_controle = ResetPin(PIN_CONTROLE_OCC, sd=sd, clock=clock)
-    reset_sensor = ResetPin(PIN_SENSOR_RESET, sd=sd, clock=clock)
-    reset_controle = ResetPin(PIN_CONTROLE_RESET, sd=sd, clock=clock)
+    occ_sensor = ResetPin(PIN_SENSOR_OCC, 'occ_s', sd=sd, clock=clock)
+    occ_controle = ResetPin(PIN_CONTROLE_OCC, 'occ_c', sd=sd, clock=clock)
+    reset_sensor = ResetPin(PIN_SENSOR_RESET, 'reset_s', sd=sd, clock=clock)
+    reset_controle = ResetPin(PIN_CONTROLE_RESET, 'reset_c', sd=sd, clock=clock)
 
 
     # Criação do arquivo data_logger.txt que armazenará as informações de leituras
     time = clock.get_time()
-    logger_path = f'/sd/data_logger/readings/{time["ano"]}_{time["mes"]}_{time["dia"]}_{time["hora"]}_{time["minuto"]}_{time["segundo"]}.csv'
-    sd.write_data(logger_path, 'day,month,year,hour,minute,second,sys1_t_int,sys1_t_dec,sys1_c_int,sys1_c_dec,sys2_t_int,sys2_t_dec,sys2_c_int,sys2_c_dec,occ_t,occ_c,reset_t,reset_c\n', 'w')
+    logger_messages_path = f'/sd/data_logger/messages/{time["ano"]}_{time["mes"]}_{time["dia"]}_{time["hora"]}_{time["minuto"]}_{time["segundo"]}.csv'
+    logger_readings_path = f'/sd/data_logger/readings/{time["ano"]}_{time["mes"]}_{time["dia"]}_{time["hora"]}_{time["minuto"]}_{time["segundo"]}.csv'
+    sd.write_data(logger_messages_path, 'day,month,year,hour,minute,second,sys1_t_int,sys1_t_dec,sys1_c_int,sys1_c_dec,sys2_t_int,sys2_t_dec,sys2_c_int,sys2_c_dec,occ_t,occ_c,reset_t,reset_c\n', 'w')
+    sd.write_data(logger_readings_path, 'name,read_0,read_1,read_2,year,month,day,hour,minute,second,m_sec\n', 'w')
     
     tempo_ini = 0
     tempo_fim = 0
@@ -102,7 +104,11 @@ def main(addr):
         if [adc0.update_enable, adc1.update_enable, adc2.update_enable, adc3.update_enable, occ_sensor.update_enable, occ_controle.update_enable, reset_sensor.update_enable, reset_controle.update_enable] == [False] * 8:
             pacote = criar_pacote('sala', clock, adc0, adc1, adc2, adc3, occ_pin0=occ_sensor, occ_pin1=occ_controle, reset_pin0=reset_sensor, reset_pin1=reset_controle)
             # Salvar no SD
-            sd.write_data(logger_path,pacote['csv'],'a')
+            sd.write_data(logger_messages_path, pacote['csv'], 'a')
+            readings_csv = ''
+            for object in [adc0, adc1, adc2, adc3, occ_sensor, occ_controle, reset_sensor, reset_controle]:
+                readings_csv += object.csv
+            sd.write_data(logger_readings_path, readings_csv, 'a')
             # Enviar via MQTT
             tempo_fim = ticks_ms()
             mqtt_client.publicar_mensagem('adm/esp_sala/server/readings_sala', pacote['mqtt_msg'])

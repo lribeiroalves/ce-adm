@@ -18,10 +18,11 @@ class MyDht:
         self.__update_enable = True
         self.__clock = clock
         self.__sd = sd
-        if self.__sd and self.__clock: # Create Data logger
-            time = self.__clock.get_time()
-            self.__log_path = f'/sd/data_logger/dht/{time["ano"]}_{time["mes"]}_{time["dia"]}_{time["hora"]}_{time["minuto"]}_{time["segundo"]}.csv'
-            self.__sd.write_data(self.__log_path, 'temp,umid,year,month,day,hour,minute,second\n', 'w')
+        self.__csv = ''
+        # if self.__sd and self.__clock: # Create Data logger
+        #     time = self.__clock.get_time()
+        #     self.__log_path = f'/sd/data_logger/dht/{time["ano"]}_{time["mes"]}_{time["dia"]}_{time["hora"]}_{time["minuto"]}_{time["segundo"]}.csv'
+        #     self.__sd.write_data(self.__log_path, 'temp,umid,year,month,day,hour,minute,second\n', 'w')
     
     
     @property
@@ -30,6 +31,11 @@ class MyDht:
             v = 0xfe if v == 0xff else v
         
         return self.__readings
+    
+
+    @property
+    def csv(self):
+        return self.__csv
     
     
     @property
@@ -43,6 +49,7 @@ class MyDht:
             self.__update_enable = True
             self.__prev_reading = self.__readings
             self.__readings = [0, 0]
+            self.__csv = ''
         else:
             raise ValueError('Esse atributo só pode ser alterado para verdadeiro.')
     
@@ -55,7 +62,8 @@ class MyDht:
             r = (self.__dht_object.temperature() * 5, self.__dht_object.humidity())
             if self.__clock and self.__sd:
                 time = self.__clock.get_time()
-#                 self.__sd.write_data(self.__log_path, f'{r[0]},{r[1]},{time["ano"] - 2000},{time["mes"]},{time["dia"]},{time["hora"]},{time["minuto"]},{time["segundo"]}\n', 'a')
+                self.__csv += f'dht,{r[0]},{r[1]},0,{time["ano"]},{time["mes"]},{time["dia"]},{time["hora"]},{time["minuto"]},{time["segundo"]},{time["m_seg"]}\n'
+                # self.__sd.write_data(self.__log_path, f'{r[0]},{r[1]},{time["ano"] - 2000},{time["mes"]},{time["dia"]},{time["hora"]},{time["minuto"]},{time["segundo"]}\n', 'a')
             return r
         except OSError:
             return (self.__prev_reading[0], self.__prev_reading[1])

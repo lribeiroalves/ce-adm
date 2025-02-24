@@ -24,10 +24,11 @@ class Gyroscope:
         self.__count_readings = 0
         self.__clock = clock
         self.__sd = sd
-        if self.__sd and self.__clock: # Create Data logger
-            time = self.__clock.get_time()
-            self.__log_path = f'/sd/data_logger/gyro/{time["ano"]}_{time["mes"]}_{time["dia"]}_{time["hora"]}_{time["minuto"]}_{time["segundo"]}.csv'
-            self.__sd.write_data(self.__log_path, 'gX,gY,gZ,year,month,day,hour,minute,second\n', 'w')
+        self.__csv = ''
+        # if self.__sd and self.__clock: # Create Data logger
+            # time = self.__clock.get_time()
+            # self.__log_path = f'/sd/data_logger/gyro/{time["ano"]}_{time["mes"]}_{time["dia"]}_{time["hora"]}_{time["minuto"]}_{time["segundo"]}.csv'
+            # self.__sd.write_data(self.__log_path, 'gX,gY,gZ,year,month,day,hour,minute,second\n', 'w')
         
         # acordar o sensor MPU 5060
         self.__i2c.writeto_mem(MPU, PWR_MNGM, bytes([0x00]))
@@ -41,6 +42,11 @@ class Gyroscope:
         
         return self.__readings
     
+
+    @property
+    def csv(self):
+        return self.__csv
+
     
     @property
     def update_enable(self):
@@ -52,6 +58,7 @@ class Gyroscope:
         if flag == True:
             self.__update_enable = True
             self.__readings = [0, 0, 0]
+            self.__csv = ''
         else:
             raise ValueError('Esse atributo só pode ser alterado para verdadeiro.')        
     
@@ -83,7 +90,8 @@ class Gyroscope:
         
         if self.__clock and self.__sd:
             time = self.__clock.get_time()
-            self.__sd.write_data(self.__log_path, f'{leitura[0]},{leitura[1]},{leitura[2]},{time["ano"]},{time["mes"]},{time["dia"]},{time["hora"]},{time["minuto"]},{time["segundo"]}\n', 'a')
+            # self.__sd.write_data(self.__log_path, f'{leitura[0]},{leitura[1]},{leitura[2]},{time["ano"]},{time["mes"]},{time["dia"]},{time["hora"]},{time["minuto"]},{time["segundo"]}\n', 'a')
+            self.__csv += f'gyro,{leitura[0]},{leitura[1]},{leitura[2]},{time["ano"]},{time["mes"]},{time["dia"]},{time["hora"]},{time["minuto"]},{time["segundo"]},{time["m_seg"]}\n'
         
         return leitura
     
