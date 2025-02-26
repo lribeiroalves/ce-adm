@@ -7,6 +7,7 @@ import signal
 import sys
 import json
 import datetime
+import pytz
 
 from adm_server.ext.socket_io import socketio
 from adm_server.ext.database import db
@@ -26,6 +27,9 @@ mqtt_topics = [
     ]
 client_mqtt = mqtt.Client()
 client_mqtt.username_pw_set(mqtt_user, mqtt_passwd)
+
+# Definição do Fuso Horário utilizado
+fuso_horario = pytz.timezone('America/Sao_Paulo')
 
 
 # Avalia se a string é um json válido
@@ -79,7 +83,9 @@ def on_message(app, client, userdata, message):
                     num_pacote = bytes([msg['num_pacote_0'], msg['num_pacote_1'], msg['num_pacote_2']])
                     num_pacote = int.from_bytes(num_pacote)
 
-                    data_recebida = datetime.date(msg['year'], msg['month'], msg['day'], msg['hour'], msg['minute'], msg['second'])
+                    data_recebida = datetime.datetime(msg['year'], msg['month'], msg['day'], msg['hour'], msg['minute'], msg['second'])
+                    data_recebida = fuso_horario.localize(data_recebida).astimezone(pytz.utc)
+                    
 
                     with app.app_context():
                         if topic.split('/')[-1] == 'readings_teste':
@@ -115,7 +121,8 @@ def on_message(app, client, userdata, message):
                     num_pacote = bytes([msg['num_pacote_0'], msg['num_pacote_1'], msg['num_pacote_2']])
                     num_pacote = int.from_bytes(num_pacote)
 
-                    data_recebida = datetime.date(msg['year'], msg['month'], msg['day'], msg['hour'], msg['minute'], msg['second'])
+                    data_recebida = datetime.datetime(msg['year'], msg['month'], msg['day'], msg['hour'], msg['minute'], msg['second'])
+                    data_recebida = fuso_horario.localize(data_recebida).astimezone(pytz.utc)
 
                     with app.app_context():
                         new_data = EspSala()
