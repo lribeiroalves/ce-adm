@@ -73,11 +73,13 @@ def on_message(app, client, userdata, message):
         case 'adm/esp_sala/server/readings_teste' | 'adm/esp_sala/server/readings_controle':
             if is_valid_json(msg):
                 msg = json.loads(msg)
-                chaves_esperadas = ['num_pacote_0', 'num_pacote_1', 'num_pacote_2', 'temp', 'umid', 'gX', 'gY', 'gZ', 'ad_sen_int', 'ad_sen_dec', 'ad_bat_int', 'ad_bat_dec']
+                chaves_esperadas = ['num_pacote_0', 'num_pacote_1', 'num_pacote_2', 'temp', 'umid', 'gX', 'gY', 'gZ', 'ad_sen_int', 'ad_sen_dec', 'ad_bat_int', 'ad_bat_dec', 'year', 'month', 'day', 'hour', 'minute', 'second']
                 if set(chaves_esperadas) == set(msg.keys()):
                     # Converter os bytes de numeração do pacote
                     num_pacote = bytes([msg['num_pacote_0'], msg['num_pacote_1'], msg['num_pacote_2']])
                     num_pacote = int.from_bytes(num_pacote)
+
+                    data_recebida = datetime.date(msg['year'], msg['month'], msg['day'], msg['hour'], msg['minute'], msg['second'])
 
                     with app.app_context():
                         if topic.split('/')[-1] == 'readings_teste':
@@ -95,7 +97,7 @@ def on_message(app, client, userdata, message):
                         new_data.ad_sen_dec = msg['ad_sen_dec']
                         new_data.ad_bat_int = msg['ad_bat_int']
                         new_data.ad_bat_dec = msg['ad_bat_dec']
-                        new_data.date = datetime.datetime.now()
+                        new_data.date = data_recebida
                         
                         db.session.add(new_data)
                         db.session.commit()
@@ -107,11 +109,13 @@ def on_message(app, client, userdata, message):
         case 'adm/esp_sala/server/readings_sala':
             if is_valid_json(msg):
                 msg = json.loads(msg)
-                chaves_esperadas = ['num_pacote_0','num_pacote_1','num_pacote_2','sys1_t_int','sys1_t_dec','sys2_t_int','sys2_t_dec','sys1_c_int','sys1_c_dec','sys2_c_int','sys2_c_dec','occ_t','occ_c','reset_t','reset_c']
+                chaves_esperadas = ['num_pacote_0','num_pacote_1','num_pacote_2','sys1_t_int','sys1_t_dec','sys2_t_int','sys2_t_dec','sys1_c_int','sys1_c_dec','sys2_c_int','sys2_c_dec','occ_t','occ_c','reset_t','reset_c', 'year', 'month', 'day', 'hour', 'minute', 'second']
                 if set(chaves_esperadas) == set(msg.keys()):
                     # Converter os bytes de numeração do pacote
                     num_pacote = bytes([msg['num_pacote_0'], msg['num_pacote_1'], msg['num_pacote_2']])
                     num_pacote = int.from_bytes(num_pacote)
+
+                    data_recebida = datetime.date(msg['year'], msg['month'], msg['day'], msg['hour'], msg['minute'], msg['second'])
 
                     with app.app_context():
                         new_data = EspSala()
@@ -132,7 +136,7 @@ def on_message(app, client, userdata, message):
                         new_data.occ_c = msg['occ_c']
                         new_data.reset_t = msg['reset_t']
                         new_data.reset_c = msg['reset_c']
-                        new_data.date = datetime.datetime.now()
+                        new_data.date = data_recebida
                         
                         db.session.add(new_data)
                         db.session.commit()

@@ -72,8 +72,9 @@ def criar_pacote(esp:str, clock:Clock = None, adc0:ADC = None, adc1:ADC = None, 
         
         # Mensagem via MQTT
         pack_counter = contagem_pacotes(ESP_ADDR['sala']) # Contagem dos pacotes
-        excluir_chaves = ['addr', 'msg_type', 'year', 'month', 'day', 'hour', 'minute', 'second']
+        excluir_chaves = ['addr', 'msg_type']
         mqtt_msg = {chave: valor for chave, valor in raw_sala.items() if chave not in excluir_chaves}
+        mqtt_msg['year'] += 2000
         mqtt_msg['num_pacote_0'] = pack_counter[0]
         mqtt_msg['num_pacote_1'] = pack_counter[1]
         mqtt_msg['num_pacote_2'] = pack_counter[2]
@@ -144,6 +145,8 @@ def convert_to_dict(buffer:list[bytes]):
         'temp': buffer[10], 'umid': buffer[9],
         'gX': buffer[11], 'gY': buffer[12], 'gZ': buffer[13],
         'num_pacote_0': pack_counter[0], 'num_pacote_1': pack_counter[1], 'num_pacote_2': pack_counter[2],
+        'year': buffer[5] + 2000, 'month': buffer[4], 'day': buffer[3],
+        'hour': buffer[6], 'minute': buffer[7], 'second': buffer[8],
     }
     return dic
 
