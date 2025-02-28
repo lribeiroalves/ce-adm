@@ -368,7 +368,7 @@ N_LEITURAS = 7
 
 class ADC:
     """ Classe para implementação específica do uso do sensor ADS1115 """
-    def __init__(self, scl_pin: int, sda_pin: int, canal: int = 0, get_pino:bool = False, time_ms: int = 100, clock:Clock = None, sd:CardSD = None):
+    def __init__(self, scl_pin: int, sda_pin: int, canal: int = 0, get_pino:bool = False, time_ms: int = 70, clock:Clock = None, sd:CardSD = None):
         self.__i2c = SoftI2C(scl=Pin(scl_pin), sda=Pin(sda_pin))
         self.__adc = ADS1115(ADS1115_ADDRESS, i2c=self.__i2c)
         self.__canal = canal if canal <= 3 else 0

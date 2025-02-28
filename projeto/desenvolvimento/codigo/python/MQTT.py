@@ -1,5 +1,6 @@
 from umqtt.simple import MQTTClient
 import ujson
+import time
 
 class MQTT:
     """ Classe para implementação do Cliente MQTT """
@@ -45,8 +46,8 @@ class MQTT:
             print(f'Conectado ao Broker MQTT: {self.__addr}')
         except OSError as e:
             print(f'Erro ao conectar ao Broker MQTT: {e}')
-            while True:
-                pass
+            time.sleep(0.5)
+            self.conectar()
     
     
     def desconectar(self):
@@ -107,10 +108,14 @@ class MQTT:
     
     def chk_msg(self, wait_msg: bool = False):
         """ Verificar novas mensagens """
-        if not wait_msg:
-            self.__client.check_msg()
+        if self.__is_connected():
+            if not wait_msg:
+                self.__client.check_msg()
+            else:
+                self.__client.wait_msg()
         else:
-            self.__client.wait_msg()
+            print('Cliente não está conectado ao broker MQTT')
+            self.conectar()
 
 
 if __name__ == '__main__':
