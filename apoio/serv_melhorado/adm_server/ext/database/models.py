@@ -24,7 +24,7 @@ class BaseModel():
     """ Modelo base para todas as tabelas """
     id:Mapped[int] = mapped_column(primary_key=True)
     num_pacote:Mapped[int] = mapped_column(Integer(), nullable=False, unique=False)
-    date:Mapped[DateTime] = mapped_column(DateTime(timezone=True), nullable=False, unique=False)
+    date:Mapped[DateTime] = mapped_column(DateTime(timezone=True, fsp=3), nullable=False, unique=False)
 
     def __repr__(self):
         return f'{self.__class__.__name__}(id = {self.id, self.num_pacote}'
