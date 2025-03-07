@@ -75,6 +75,16 @@ class ResetPin:
             else:
                 self.__count_readings = 0
                 self.__update_enable = False
+    
+
+    def leitura_mqtt(self):
+        leitura = self.__pin.value()
+
+        if self.__clock and self.__sd:
+            time = self.__clock.get_time()
+            self.__csv += f'{self.__name},{leitura},0,0,{time["ano"]},{time["mes"]},{time["dia"]},{time["hora"]},{time["minuto"]},{time["segundo"]},{time["m_seg"]}\n'
+
+        return [leitura]
 
 
 
