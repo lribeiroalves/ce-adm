@@ -115,13 +115,13 @@ def on_message(app, client, userdata, message):
         case 'adm/esp_sala/server/readings_sala':
             if is_valid_json(msg):
                 msg = json.loads(msg)
-                chaves_esperadas = ['num_pacote_0','num_pacote_1','num_pacote_2','sys1_t_int','sys1_t_dec','sys2_t_int','sys2_t_dec','sys1_c_int','sys1_c_dec','sys2_c_int','sys2_c_dec','occ_t','occ_c','reset_t','reset_c', 'year', 'month', 'day', 'hour', 'minute', 'second']
+                chaves_esperadas = ['num_pacote_0','num_pacote_1','num_pacote_2','sys1_t_int','sys1_t_dec','sys2_t_int','sys2_t_dec','sys1_c_int','sys1_c_dec','sys2_c_int','sys2_c_dec','occ_t','occ_c','reset_t','reset_c', 'year', 'month', 'day', 'hour', 'minute', 'second', 'milisec']
                 if set(chaves_esperadas) == set(msg.keys()):
                     # Converter os bytes de numeração do pacote
                     num_pacote = bytes([msg['num_pacote_0'], msg['num_pacote_1'], msg['num_pacote_2']])
                     num_pacote = int.from_bytes(num_pacote)
 
-                    data_recebida = datetime.datetime(msg['year'], msg['month'], msg['day'], msg['hour'], msg['minute'], msg['second'])
+                    data_recebida = datetime.datetime(msg['year'], msg['month'], msg['day'], msg['hour'], msg['minute'], msg['second'], msg['milisec'])
                     data_recebida = fuso_horario.localize(data_recebida).astimezone(pytz.utc)
 
                     with app.app_context():
