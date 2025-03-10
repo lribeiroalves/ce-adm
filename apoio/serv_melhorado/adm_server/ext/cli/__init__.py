@@ -31,9 +31,16 @@ def drop_db():
 
 def clear_db():
     """ Limpa os dados mas mantém a tabela """
-    db.drop_all()
-    db.create_all()
-    click.echo('Database restaurada.')
+    try:
+        # Apagar todos os registros das tabelas
+        db.session.query(EspTeste).delete()
+        db.session.query(EspControle).delete()
+        db.session.query(EspSala).delete()
+        db.session.commit()  # Aplicar a mudança no banco de dados
+        click.echo("Todas as linhas foram apagadas com sucesso.")
+    except Exception as e:
+        db.session.rollback()  # Reverter em caso de erro
+        click.echo(f"Erro ao apagar as linhas: {e}")
     end_app()
 
 
