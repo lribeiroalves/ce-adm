@@ -1,13 +1,6 @@
 """ Arquivo de funções auxiliares para os códigos main """
 
-from CRC16 import *
-from MQTT import MQTT
-from Clock import Clock
-from MyDht import MyDht
-from Gyroscope import Gyroscope
-# from ADC import ADC
-from ResetPin import ResetPin
-
+from classes_ajuda import *
 from machine import UART, Pin
 from time import sleep_ms
 import ujson
@@ -34,6 +27,45 @@ topicos_mqtt_pub = ['adm/esp_sala/server/readings_',
                     'adm/esp_sala/server/req_time']
 
 
+################################################################################################################################################################################################################################################################################################################################################################################################################################################
+
+
+# função para gerar o checksum
+def calcular_crc16(data:list[bytes], polinomio=0x8408) -> list[bytes, bytes]:
+    if type(data) == list:
+        crc = 0xFFFF
+        for byte in data:
+            crc ^= byte
+            for _ in range(8):
+                if crc & 0x0001:
+                    crc = (crc >> 1) ^ polinomio
+                else:
+                    crc >>= 1
+        
+        crc = ~crc & 0xFFFF
+        crc_h = crc >> 8
+        crc_l = crc & 0x00FF
+        return [crc_h, crc_l, crc]
+    else:
+        raise AttributeError('Variavel recebida não é do tipo list')
+
+
+# função para verificar o checksum 
+def verificar_crc16(data:list[bytes]) -> list[bytes]:
+    if type(data) == list:
+        dados_uteis = data[:-2]
+        dados_check = data[-2] << 8 | data[-1]
+        if dados_check == calcular_crc16(dados_uteis)[2]:
+            return dados_uteis
+        else:
+            return None
+    else:
+        raise AttributeError('Variavel recebida não é do tipo list')
+
+
+################################################################################################################################################################################################################################################################################################################################################################################################################################################
+
+
 def contagem_pacotes(addr:bytes) -> list[bytes, bytes, bytes]:
     """ Função para fazer a contagem dos pacotes enviados via MQTT """
     if num_pacote[addr][2] < 0xFF:
@@ -53,7 +85,7 @@ def contagem_pacotes(addr:bytes) -> list[bytes, bytes, bytes]:
 
 
 # Criação dos pacotes de dados das leituras realizadas por cada sensor
-def criar_pacote(esp:str, clock:Clock = None, adc0:ADC = None, adc1:ADC = None, adc2:ADC = None, adc3:ADC = None, dht:MyDht = None, gyro:Gyroscope = None, occ_pin0:ResetPin = None, occ_pin1:ResetPin = None, reset_pin0:ResetPin = None, reset_pin1:ResetPin = None):
+def criar_pacote(esp:str, clock:Clock = None, adc0:ADC = None, adc1:ADC = None, adc2:ADC = None, adc3:ADC = None, dht:MyDht = None, gyro:Gyroscope = None, occ_pin0:OptoPin = None, occ_pin1:OptoPin = None, reset_pin0:OptoPin = None, reset_pin1:OptoPin = None):
     if esp == 'sala':
         time = clock.get_time()
         # Dados brutos
@@ -110,6 +142,40 @@ def criar_pacote(esp:str, clock:Clock = None, adc0:ADC = None, adc1:ADC = None, 
         return {'raw': raw, 'csv': csv, 'lora_msg':lora_msg}
 
 
+# função para criar o pacote usado para comunicação entre sala e servidor
+def pacote_sala(adc0 = None, adc1 = None, adc2 = None, adc3 = None, occ_sensor = None, occ_controle = None, reset_sensor = None, reset_controle = None, clock = None):
+    time = clock.get_time()
+    pack_counter = contagem_pacotes(ESP_ADDR['sala']) # Contagem dos pacotes
+    
+    leitura_adc0 = adc0.leitura_mqtt()
+    leitura_adc1 = adc1.leitura_mqtt()
+    leitura_adc2 = adc2.leitura_mqtt()
+    leitura_adc3 = adc3.leitura_mqtt()
+    occ_s = occ_sensor.leitura_mqtt()[0]
+    occ_c = occ_controle.leitura_mqtt()[0]
+    reset_s = reset_sensor.leitura_mqtt()[0]
+    reset_c = reset_controle.leitura_mqtt()[0]
+    
+    mqtt_message = {
+        'sys1_t_int': leitura_adc0[0], 'sys1_t_dec': leitura_adc0[1],
+        'sys2_t_int': leitura_adc1[0], 'sys2_t_dec': leitura_adc1[1],
+        'sys1_c_int': leitura_adc2[0], 'sys1_c_dec': leitura_adc2[1],
+        'sys2_c_int': leitura_adc3[0], 'sys2_c_dec': leitura_adc3[1],
+        'occ_t': occ_s, 'occ_c': occ_c,
+        'reset_t': reset_s, 'reset_c': reset_c,
+        'year': time['ano'], 'month': time['mes'], 'day': time['dia'],
+        'hour': time['hora'], 'minute': time['minuto'], 'second': time['segundo'], 'milisec': time['m_seg'],
+        'num_pacote_0': pack_counter[0], 'num_pacote_1': pack_counter[1], 'num_pacote_2': pack_counter[2]
+    }
+
+    csv = f"{mqtt_message['day']},{mqtt_message['month']},{mqtt_message['year']},{mqtt_message['hour']},{mqtt_message['minute']},{mqtt_message['second']},{mqtt_message['sys1_t_int']},{mqtt_message['sys1_t_dec']},{mqtt_message['sys1_c_int']},{mqtt_message['sys1_c_dec']},{mqtt_message['sys2_t_int']},{mqtt_message['sys2_t_dec']},{mqtt_message['sys2_c_int']},{mqtt_message['sys2_c_dec']},{mqtt_message['occ_t']},{mqtt_message['occ_c']},{mqtt_message['reset_t']},{mqtt_message['reset_c']}\n"
+
+    return {'mqtt_msg': mqtt_message, 'csv': csv}
+
+
+################################################################################################################################################################################################################################################################################################################################################################################################################################################
+
+
 # Funçao para lidar com mensagens recebidas pelos tópicos MQTT
 def get_mqtt(topic_coded:bytes, msg_coded:bytes, clock:Clock = None):
     topic, msg = topic_coded.decode(), msg_coded.decode()
@@ -149,6 +215,9 @@ def convert_to_dict(buffer:list[bytes]):
         'hour': buffer[6], 'minute': buffer[7], 'second': buffer[8],
     }
     return dic
+
+
+################################################################################################################################################################################################################################################################################################################################################################################################################################################
 
 
 # Função para separar o buffer recebido via LoRa em mensagens separadas 
@@ -209,6 +278,9 @@ def get_lora(buffer: list[bytes], lora:UART = None, mqtt:MQTT = None, clock:Cloc
                         print('Valor recebido não é uma Data/Hora válida. Solicitando novamente')                    
 
 
+################################################################################################################################################################################################################################################################################################################################################################################################################################################
+
+
 # Requisição de Horário (Para o programa até setar o clock interno)
 def atualizar_clock(esp:str, lora:UART = None, mqtt:MQTT = None, clock:Clock = None):
     if esp == 'sala':
@@ -241,81 +313,3 @@ def atualizar_clock(esp:str, lora:UART = None, mqtt:MQTT = None, clock:Clock = N
                 get_lora(buffer, lora, mqtt, clock)
         time = clock.get_time()
         print(f'Informação de horário recebida: {time["dia"]:02}/{time["mes"]:02}/{time["ano"]:04} - {time["hora"]:02}:{time["minuto"]:02}:{time["segundo"]:02}')
-
-"""
-
-time = clock.get_time()
-        # Dados brutos
-        raw_sala = {
-            'sys1_t_int': adc0.readings[0], 'sys1_t_dec': adc0.readings[1],
-            'sys2_t_int': adc1.readings[0], 'sys2_t_dec': adc1.readings[1],
-            'sys1_c_int': adc2.readings[0], 'sys1_c_dec': adc2.readings[1],
-            'sys2_c_int': adc3.readings[0], 'sys2_c_dec': adc3.readings[1],
-            'occ_t': occ_pin0.readings, 'occ_c': occ_pin1.readings,
-            'reset_t': reset_pin0.readings, 'reset_c': reset_pin1.readings,
-            'year': time['ano'] - 2000, 'month': time['mes'], 'day': time['dia'],
-            'hour': time['hora'], 'minute': time['minuto'], 'second': time['segundo']
-        }
-
-"""
-
-
-def pacote_sala(adc0 = None, adc1 = None, adc2 = None, adc3 = None, occ_sensor = None, occ_controle = None, reset_sensor = None, reset_controle = None, clock = None):
-    time = clock.get_time()
-    pack_counter = contagem_pacotes(ESP_ADDR['sala']) # Contagem dos pacotes
-    
-    leitura_adc0 = adc0.leitura_mqtt()
-    leitura_adc1 = adc1.leitura_mqtt()
-    leitura_adc2 = adc2.leitura_mqtt()
-    leitura_adc3 = adc3.leitura_mqtt()
-    occ_s = occ_sensor.leitura_mqtt()[0]
-    occ_c = occ_controle.leitura_mqtt()[0]
-    reset_s = reset_sensor.leitura_mqtt()[0]
-    reset_c = reset_controle.leitura_mqtt()[0]
-    
-    mqtt_message = {
-        'sys1_t_int': leitura_adc0[0], 'sys1_t_dec': leitura_adc0[1],
-        'sys2_t_int': leitura_adc1[0], 'sys2_t_dec': leitura_adc1[1],
-        'sys1_c_int': leitura_adc2[0], 'sys1_c_dec': leitura_adc2[1],
-        'sys2_c_int': leitura_adc3[0], 'sys2_c_dec': leitura_adc3[1],
-        'occ_t': occ_s, 'occ_c': occ_c,
-        'reset_t': reset_s, 'reset_c': reset_c,
-        'year': time['ano'], 'month': time['mes'], 'day': time['dia'],
-        'hour': time['hora'], 'minute': time['minuto'], 'second': time['segundo'], 'milisec': time['m_seg'],
-        'num_pacote_0': pack_counter[0], 'num_pacote_1': pack_counter[1], 'num_pacote_2': pack_counter[2]
-    }
-
-    csv = f"{mqtt_message['day']},{mqtt_message['month']},{mqtt_message['year']},{mqtt_message['hour']},{mqtt_message['minute']},{mqtt_message['second']},{mqtt_message['sys1_t_int']},{mqtt_message['sys1_t_dec']},{mqtt_message['sys1_c_int']},{mqtt_message['sys1_c_dec']},{mqtt_message['sys2_t_int']},{mqtt_message['sys2_t_dec']},{mqtt_message['sys2_c_int']},{mqtt_message['sys2_c_dec']},{mqtt_message['occ_t']},{mqtt_message['occ_c']},{mqtt_message['reset_t']},{mqtt_message['reset_c']}\n"
-
-    return {'mqtt_msg': mqtt_message, 'csv': csv}
-    
-
-def calcular_crc16(data:list[bytes], polinomio=0x8408) -> list[bytes, bytes]:
-    if type(data) == list:
-        crc = 0xFFFF
-        for byte in data:
-            crc ^= byte
-            for _ in range(8):
-                if crc & 0x0001:
-                    crc = (crc >> 1) ^ polinomio
-                else:
-                    crc >>= 1
-        
-        crc = ~crc & 0xFFFF
-        crc_h = crc >> 8
-        crc_l = crc & 0x00FF
-        return [crc_h, crc_l, crc]
-    else:
-        raise AttributeError('Variavel recebida não é do tipo list')
-
-
-def verificar_crc16(data:list[bytes]) -> list[bytes]:
-    if type(data) == list:
-        dados_uteis = data[:-2]
-        dados_check = data[-2] << 8 | data[-1]
-        if dados_check == calcular_crc16(dados_uteis)[2]:
-            return dados_uteis
-        else:
-            return None
-    else:
-        raise AttributeError('Variavel recebida não é do tipo list')

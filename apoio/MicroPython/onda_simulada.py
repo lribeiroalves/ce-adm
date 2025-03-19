@@ -3,7 +3,7 @@ import time
 import math
 import random
 
-dac = DAC(Pin(26))
+dac = DAC(25)
 dac.write(255)
 tempo = random.randint(1000, 5000)
 prev = 0
@@ -31,9 +31,9 @@ while True:
 
     if curr >= tempo + prev:
         prev = curr
-        tempo = random.randint(1000, 5000)
+        tempo = random.randint(4500, 5000)
         
-        ciclos = random.randint(1, 25)
+        ciclos = random.randint(4, 5)
         
         for _ in range(ciclos+1):
             gerar_senoide()

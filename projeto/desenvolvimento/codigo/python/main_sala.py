@@ -1,15 +1,10 @@
-from machine import UART, Pin
+from machine import UART, freq
 from time import sleep_ms, ticks_ms
-import ujson
+from classes_ajuda import *
+from funcoes_ajuda import *
 
-from CRC16 import *
-from WIFI import WIFI
-from MQTT import MQTT
-from CardSD import CardSD
-from ADC import ADC
-from Clock import Clock
-from ResetPin import ResetPin
-from funcoes_ajuda import atualizar_clock, get_lora, get_mqtt, criar_pacote
+# Definir a frequencia de trabalho do ESP32
+freq(240000000)
 
 # PINOUT
 PIN_LORA_RX = 2
@@ -24,10 +19,6 @@ PIN_SENSOR_RESET = 25
 PIN_SENSOR_OCC = 26
 PIN_CONTROLE_RESET = 27
 PIN_CONTROLE_OCC = 33
-
-# # Endereçamento e tipos de mensagem
-# ESP_ADDR = {'teste': 0x01, 'controle': 0x02, 'sala': 0x03}
-# MSG_TYPE = {'leitura': 0x10, 'clock_get': 0x20, 'clock_set': 0x30}
 
 # Endereços de Rede e Broker MQTT
 WIFI_SSID = 'SCA_Instrumentos'
@@ -45,7 +36,7 @@ MQTT_PSWD = 'esp32'
 
 
 def main(addr):
-    # Criar instancias
+    # Criar instancias de comunicação e de clock interno
     wifi = WIFI(ssid=WIFI_SSID, pswd=WIFI_PSWD)
     mqtt_client = MQTT(addr=BROKER_ADRR, user=MQTT_USER, pswd=MQTT_PSWD, port=BROKER_PORT)
     lora = UART(1, baudrate=115200, tx=PIN_LORA_TX, rx=PIN_LORA_RX)
@@ -62,65 +53,69 @@ def main(addr):
     # Definição do horário inicial do RTC interno (Requisição ao servidor)
     atualizar_clock(esp='sala', lora=lora, mqtt=mqtt_client, clock=clock)
 
-    # Conclusão das instâncias
+    # Criar instancias objetos de leitura e escrita
     sd = CardSD(PIN_CS, PIN_SCK, PIN_MOSI, PIN_MISO)
     adc0 = ADC(PIN_SCL, PIN_SDA, canal = 0, get_pino = True, sd=sd, clock=clock)
     adc1 = ADC(PIN_SCL, PIN_SDA, canal = 1, get_pino = True, sd=sd, clock=clock)
     adc2 = ADC(PIN_SCL, PIN_SDA, canal = 2, get_pino = True, sd=sd, clock=clock)
     adc3 = ADC(PIN_SCL, PIN_SDA, canal = 3, get_pino = True, sd=sd, clock=clock)
-    occ_sensor = ResetPin(PIN_SENSOR_OCC, 'occ_s', sd=sd, clock=clock)
-    occ_controle = ResetPin(PIN_CONTROLE_OCC, 'occ_c', sd=sd, clock=clock)
-    reset_sensor = ResetPin(PIN_SENSOR_RESET, 'reset_s', sd=sd, clock=clock)
-    reset_controle = ResetPin(PIN_CONTROLE_RESET, 'reset_c', sd=sd, clock=clock)
+    occ_sensor = OptoPin(PIN_SENSOR_OCC, 'occ_s', sd=sd, clock=clock)
+    occ_controle = OptoPin(PIN_CONTROLE_OCC, 'occ_c', sd=sd, clock=clock)
+    reset_sensor = OptoPin(PIN_SENSOR_RESET, 'reset_s', sd=sd, clock=clock)
+    reset_controle = OptoPin(PIN_CONTROLE_RESET, 'reset_c', sd=sd, clock=clock)
 
 
     # Criação do arquivo data_logger.txt que armazenará as informações de leituras
     time = clock.get_time()
     logger_messages_path = f'/sd/data_logger/messages/{time["ano"]}_{time["mes"]}_{time["dia"]}_{time["hora"]}_{time["minuto"]}_{time["segundo"]}.csv'
-    logger_readings_path = f'/sd/data_logger/readings/{time["ano"]}_{time["mes"]}_{time["dia"]}_{time["hora"]}_{time["minuto"]}_{time["segundo"]}.csv'
+#     logger_readings_path = f'/sd/data_logger/readings/{time["ano"]}_{time["mes"]}_{time["dia"]}_{time["hora"]}_{time["minuto"]}_{time["segundo"]}.csv'
     sd.write_data(logger_messages_path, 'day,month,year,hour,minute,second,sys1_t_int,sys1_t_dec,sys1_c_int,sys1_c_dec,sys2_t_int,sys2_t_dec,sys2_c_int,sys2_c_dec,occ_t,occ_c,reset_t,reset_c\n', 'w')
-    sd.write_data(logger_readings_path, 'name,read_0,read_1,read_2,year,month,day,hour,minute,second,m_sec\n', 'w')
+#     sd.write_data(logger_readings_path, 'name,read_0,read_1,read_2,year,month,day,hour,minute,second,m_sec\n', 'w')
     
-    tempo_ini = 0
+    # definição dos tempos de leituras e escritas em ms
+    reading_time = 50
+    previous_reading_time = 0
+    writing_time = 2000
+    previous_writing_time = 0
+
     tempo_fim = 0
-    # Loop
+    tempo_ini = 0
+    
+    csv_readings = '' # armazenamento das mensagens enviadas para o mqtt
+    
     while True:
-        if lora.any(): # Verificar novos pacote LoRa
+        # Verificar novos pacote LoRa
+        if lora.any():
             sleep_ms(10) #10ms garante pacotes de até 144 Bytes (4 pacotes completos)
             buffer = [b for b in lora.read()]
             get_lora(buffer, lora=lora, mqtt=mqtt_client, clock=clock)
-        mqtt_client.chk_msg() # Verificar novas mensagens MQTT
-        # Coletar dados de occ e reset
-        adc0.update()
-        adc1.update()
-        adc2.update()
-        adc3.update()
-        occ_sensor.update()
-        occ_controle.update()
-        reset_sensor.update()
-        reset_controle.update()
 
-        # Verificar se os dados foram coletados, armazenar localmente, criar pacote e enviar ao servidor via MQTT
-        if [adc0.update_enable, adc1.update_enable, adc2.update_enable, adc3.update_enable, occ_sensor.update_enable, occ_controle.update_enable, reset_sensor.update_enable, reset_controle.update_enable] == [False] * 8:
-            pacote = criar_pacote('sala', clock, adc0, adc1, adc2, adc3, occ_pin0=occ_sensor, occ_pin1=occ_controle, reset_pin0=reset_sensor, reset_pin1=reset_controle)
-            # Salvar no SD
-            sd.write_data(logger_messages_path, pacote['csv'], 'a')
-            readings_csv = ''
+        # Verificar novas mensagens MQTT
+        mqtt_client.chk_msg()
+
+        # verificar se o tempo de leituras já estourou
+        current_time = ticks_ms()
+        
+        # Realiza leituras após o reading time
+        if current_time >= previous_reading_time + reading_time:
+            previous_reading_time = current_time
+            # realiza as leituras, e retorna um pacote com a mensagem mqtt e a string csv
+            pacote = pacote_sala(adc0, adc1, adc2, adc3, occ_sensor, occ_controle, reset_sensor, reset_controle, clock)
+            # apagar os registros internos de leituras individuais dos sensores para liberar memoria
             for object in [adc0, adc1, adc2, adc3, occ_sensor, occ_controle, reset_sensor, reset_controle]:
-                readings_csv += object.csv
-            sd.write_data(logger_readings_path, readings_csv, 'a')
+                object.clear_csv()
+            # registra as leituras para serem escritas no SD posteriormente
+            csv_readings += pacote['csv']
             # Enviar via MQTT
             tempo_fim = ticks_ms()
             mqtt_client.publicar_mensagem('adm/esp_sala/server/readings_sala', pacote['mqtt_msg'])
             print(f'Tempo: {(tempo_fim - tempo_ini) / 1000:.2f} segundos')
             tempo_ini = ticks_ms()
-            
-            # Habilitar novas leituras
-            adc0.update_enable = True
-            adc1.update_enable = True
-            adc2.update_enable = True
-            adc3.update_enable = True
-            occ_sensor.update_enable = True
-            occ_controle.update_enable = True
-            reset_sensor.update_enable = True
-            reset_controle.update_enable = True
+        
+        # Realiza a escrita no cartão SD após o writing_time
+        if current_time >= previous_writing_time + writing_time:
+            previous_writing_time = current_time
+            if csv_readings != '':
+                # Salvar no SD
+                sd.write_data(logger_messages_path, csv_readings, 'a')
+            csv_readings = ''

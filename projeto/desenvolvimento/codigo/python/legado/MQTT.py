@@ -46,8 +46,8 @@ class MQTT:
             print(f'Conectado ao Broker MQTT: {self.__addr}')
         except OSError as e:
             print(f'Erro ao conectar ao Broker MQTT: {e}')
-            time.sleep(0.5)
-            self.conectar()
+#             time.sleep(0.5)
+#             self.conectar()
     
     
     def desconectar(self):

@@ -1,3 +1,3 @@
 - Melhorar o tempo de envio sem parar de salvar os dados no SD
 - Testar os opto acopladores usando a fonte de 24Vcc
-- Refatorar os códigos de sala e via para as novas classes
+- Refatorar os códigos de sala e via para as novas classes  
