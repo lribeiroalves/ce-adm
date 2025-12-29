@@ -1,5 +1,6 @@
 """ MQTT Client Factory """
 
+import os
 import paho.mqtt.client as mqtt
 from flask_socketio import emit
 import threading
@@ -14,10 +15,18 @@ from adm_server.ext.database import db
 from adm_server.ext.database.models import *
 
 
-broker_address = 'localhost'
-broker_port = 1883
-mqtt_user = 'flask'
-mqtt_passwd = 'flask'
+#broker_address = 'localhost'
+#broker_port = 1883
+#mqtt_user = 'flask'
+#mqtt_passwd = 'flask'
+
+# Busca do .env, se não achar usa um valor padrão
+broker_address = os.getenv('MQTT_BROKER_HOST', 'localhost') 
+broker_port = int(os.getenv('MQTT_BROKER_PORT', 1883))
+mqtt_user = os.getenv('MQTT_USER', 'flask')
+mqtt_passwd = os.getenv('MQTT_PASSWORD', 'flask')
+# ---------------------
+
 mqtt_topics = [
     'test/server/hello',
     'adm/esp_sala/server/req_time',
